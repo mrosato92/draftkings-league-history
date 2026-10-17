@@ -24,7 +24,7 @@ export function ScoringChart({
   data,
   title = "No scores. No fictional trend lines.",
 }: {
-  data: { label: string; score: number | null }[];
+  data: { label: string; score: number | null; count?: number }[];
   title?: string;
 }) {
   if (!data.some((d) => d.score !== null))
@@ -78,7 +78,10 @@ export function ScoringChart({
           />
           <Tooltip
             contentStyle={tooltip}
-            formatter={(v) => [Number(v).toFixed(2), "Points"]}
+            formatter={(v, _name, item) => [
+              Number(v).toFixed(2),
+              `Points (n=${item.payload.count ?? "unknown"})`,
+            ]}
           />
           <Area
             type="linear"

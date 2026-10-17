@@ -53,6 +53,7 @@ import {
 } from "@/lib/analytics";
 import { sections, type SectionId } from "@/lib/navigation";
 import {
+  AverageToggle,
   DataTable,
   EmptyState,
   fmt,
@@ -65,6 +66,7 @@ import {
   type Column,
 } from "./ui";
 import { LuckChart, ScoringChart } from "./charts";
+import { Leaderboards, ObservedSelections } from "./leaderboards";
 const icons: Record<string, LucideIcon> = {
   home: Grid2X2,
   users: Users,
@@ -89,6 +91,14 @@ const managerColumns: Column<Standing>[] = [
     label: "MANAGER",
     value: (r) => r.manager,
     render: (r) => <ManagerName username={r.manager} />,
+  },
+  { key: "games", label: "GAMES", value: (r) => r.games, numeric: true },
+  {
+    key: "averageGames",
+    label: "AVG N",
+    value: (r) => r.averageGames,
+    numeric: true,
+    description: "Scores included in the scoring average",
   },
   { key: "wins", label: "W", value: (r) => r.wins, numeric: true },
   { key: "losses", label: "L", value: (r) => r.losses, numeric: true },
@@ -390,11 +400,11 @@ export default function Dashboard({
                 <strong>
                   {allPending
                     ? "The archive is taking shape."
-                    : "Built from official scorecards."}
+                    : "Built from imported scorecards."}
                 </strong>{" "}
                 {allPending
                   ? "Historical results are awaiting import. Every stat here will be earned."
-                  : `${count} verified matchups imported. ${allComplete ? "All seven regular seasons are complete." : "Results are provisional while imports are incomplete."}`}
+                  : `${count} official-score matchups imported. ${allComplete ? "All seven regular seasons are complete." : "Results are provisional while imports are incomplete."}`}
               </span>
             </div>
             <button onClick={() => setModal("data")}>
@@ -414,6 +424,21 @@ export default function Dashboard({
               seasons={selected}
               league={league}
               username={username}
+              excludeZeros={excludeZeros}
+              setExcludeZeros={setExcludeZeros}
+            />
+          )}
+          {section === "leaderboards" && (
+            <Leaderboards
+              seasons={selected}
+              excludeZeros={excludeZeros}
+              setExcludeZeros={setExcludeZeros}
+            />
+          )}
+          {section === "compare" && (
+            <Rivalries
+              seasons={selected}
+              comparison
               excludeZeros={excludeZeros}
               setExcludeZeros={setExcludeZeros}
             />
@@ -529,7 +554,8 @@ export default function Dashboard({
                 <div key={s.year}>
                   <strong>{s.year}</strong>
                   <span>
-                    {s.matchups.length} matchups · {s.lineups.length} lineups
+                    {s.matchups.length} matchups · {s.lineups.length} lineups ·{" "}
+                    {s.verification}
                   </span>
                   <span
                     className={`badge ${s.status === "complete" ? "green" : ""}`}
@@ -580,44 +606,26 @@ export default function Dashboard({
             <p>
               Each manager is compared with the other 15 scores in a fully
               imported week. Expected wins = (all-play wins + half of all-play
-              ties) ÷ 15, summed across eligible weeks. Luck = actual win
-              equivalents − expected wins, using the same weeks. Two zero scores
-              both earn all-play losses.
+              ties) ÷ 15, summed across eligible weeks. Luck = official wins −
+              expected wins, using the same weeks. All-play compares numerical
+              scores: two zero scores tie here, while both remain official
+              losses.
             </p>
             <h3>The boundaries</h3>
             <p>
               2019–2025, regular season only: 14 or 15 confirmed weeks per
-              season. Partial imports are labeled. Tied records share credit.
-              Lineup analytics use available detailed lineups only; official
-              scores without selections remain in every scoring statistic.
-              Ownership means selection rate among imported league lineups,
-              never contest-wide ownership.
+              season. Partial imports are labeled. Records publish only from
+              complete seasons marked reconciled against official source results
+              and standings. Tied records share credit. Lineup analytics use
+              available detailed lineups only; official scores without
+              selections remain in every scoring statistic. Ownership means
+              selection rate among imported league lineups, never contest-wide
+              ownership.
             </p>
           </div>
         </Dialog>
       )}
     </div>
-  );
-}
-function AverageToggle({
-  value,
-  onChange,
-}: {
-  value: boolean;
-  onChange: (v: boolean) => void;
-}) {
-  return (
-    <label className="toggle-label">
-      <input
-        type="checkbox"
-        checked={value}
-        onChange={(e) => onChange(e.target.checked)}
-      />
-      <span className="toggle" />
-      <span>
-        Exclude missed weeks <span className="muted">(averages)</span>
-      </span>
-    </label>
   );
 }
 function Overview({
@@ -788,7 +796,11 @@ function Overview({
           )}
           <div className="panel-bottom">
             <span className="micro-tag">
-              {hasScores ? "IMPORTED RESULTS" : "UNCLAIMED TERRITORY"}
+              {recordList.length
+                ? `${seasons.filter((s) => s.verification === "reconciled").length}/${seasons.length} RECONCILED SEASONS`
+                : hasScores
+                  ? "UNVERIFIED RECORDS WITHHELD"
+                  : "UNCLAIMED TERRITORY"}
             </span>
             <SectionLink href="/records">Record book</SectionLink>
           </div>
@@ -950,7 +962,7 @@ function Managers({
             <h2>{username}</h2>
             <p>
               {career?.seasons ?? 0} seasons in the archive · Career standing #
-              {careerRank || "—"} (wins, then points)
+              {career?.games ? careerRank : "—"} (wins, then points)
             </p>
           </div>
           <Link className="button subtle" href="/managers">
@@ -1048,6 +1060,7 @@ function Managers({
             note="All imported regular-season results"
           />
         </div>
+        <ObservedSelections seasons={seasons} manager={username} />
         <Panel title="Every Sunday, on record">
           <GameTable
             rows={games(seasons).filter((g) => g.manager === username)}
@@ -1206,9 +1219,11 @@ function RecordBook({ seasons }: { seasons: Season[] }) {
         </div>
       )}
       <InfoNote>
-        Record candidates use imported regular-season results only. Incomplete
-        seasons make records provisional. Zero-point weeks remain in official
-        statistics; “The basement” is explicitly limited to nonzero submissions.
+        Record candidates use source-reconciled regular-season results only.
+        Incomplete seasons are withheld until complete and reconciled. Records
+        cover only the reconciled seasons in this scope. Zero-point weeks remain
+        in official statistics; “The basement” is explicitly limited to nonzero
+        submissions.
       </InfoNote>
     </>
   );
@@ -1236,15 +1251,28 @@ function RecordCard({
     </article>
   );
 }
-function Rivalries({ seasons }: { seasons: Season[] }) {
+function Rivalries({
+  seasons,
+  comparison = false,
+  excludeZeros = false,
+  setExcludeZeros,
+}: {
+  seasons: Season[];
+  comparison?: boolean;
+  excludeZeros?: boolean;
+  setExcludeZeros?: (value: boolean) => void;
+}) {
   const members = [...new Set(seasons.flatMap((s) => s.members))].sort();
   const [a, setA] = useState("");
   const [b, setB] = useState("");
-  const first = a || members[0] || "";
-  const second = b || members.find((m) => m !== first) || "";
+  const first = members.includes(a) ? a : members[0] || "";
+  const second =
+    members.includes(b) && b !== first
+      ? b
+      : members.find((m) => m !== first) || "";
   const history =
     first && second && first !== second ? rivalry(seasons, first, second) : [];
-  const rows = standings(seasons);
+  const rows = standings(seasons, excludeZeros);
   const ra = rows.find((r) => r.manager === first),
     rb = rows.find((r) => r.manager === second);
   return (
@@ -1332,18 +1360,41 @@ function Rivalries({ seasons }: { seasons: Season[] }) {
         />
       </div>
       <Panel
-        title="Side-by-side résumé"
+        title={comparison ? "The Comparison Lab" : "Side-by-side résumé"}
         eyebrow="ALL OPPONENTS / SELECTED SEASONS"
+        aside={
+          comparison && setExcludeZeros ? (
+            <AverageToggle value={excludeZeros} onChange={setExcludeZeros} />
+          ) : undefined
+        }
       >
         {ra && rb ? (
           <div className="comparison">
             {[
+              { label: "Imported games", a: ra.games, b: rb.games },
               { label: "Total wins", a: ra.wins, b: rb.wins },
+              {
+                label: "Win percentage",
+                a: pct(ra.winRate),
+                b: pct(rb.winRate),
+              },
               { label: "Total points", a: fmt(ra.points), b: fmt(rb.points) },
               {
-                label: "Scoring average (zeros included)",
+                label: excludeZeros
+                  ? "Scoring average (missed weeks excluded)"
+                  : "Scoring average (zeros included)",
                 a: fmt(ra.average),
                 b: fmt(rb.average),
+              },
+              {
+                label: "Included scoring weeks",
+                a: ra.averageGames,
+                b: rb.averageGames,
+              },
+              {
+                label: "Points per imported game (zeros included)",
+                a: ra.games ? fmt(ra.points / ra.games) : "—",
+                b: rb.games ? fmt(rb.points / rb.games) : "—",
               },
               { label: "Best week", a: fmt(ra.best), b: fmt(rb.best) },
               { label: "Missed submissions", a: ra.missed, b: rb.missed },
@@ -1362,6 +1413,14 @@ function Rivalries({ seasons }: { seasons: Season[] }) {
           />
         )}
       </Panel>
+      {comparison && (
+        <InfoNote>
+          Comparison rates have no qualification cutoff: both managers’ actual
+          game counts and average denominators are shown. Season and missed-week
+          filters affect averages; official totals and W/L stay unchanged. Use
+          Leaderboards for qualified rankings.
+        </InfoNote>
+      )}
       <Panel title="The head-to-head receipts" aside={<Swords size={20} />}>
         <GameTable rows={history} />
       </Panel>
@@ -1375,7 +1434,11 @@ function outcomeOther(g: Game, seasons: Season[]) {
 }
 function Luck({ seasons }: { seasons: Season[] }) {
   const [minimumWeeks, setMinimumWeeks] = useState(1);
+  const [view, setView] = useState("career");
   const rows = luckTable(seasons).filter((r) => r.weeks >= minimumWeeks);
+  const seasonRows = seasons
+    .flatMap((s) => luckTable([s]).map((r) => ({ ...r, year: s.year })))
+    .filter((r) => r.weeks >= minimumWeeks);
   const weeks = seasons.reduce((n, s) => n + completeWeeks(s).length, 0);
   return (
     <>
@@ -1410,7 +1473,7 @@ function Luck({ seasons }: { seasons: Season[] }) {
         <Metric
           label="LUCK DIFFERENTIAL"
           value="W − xW"
-          note="Same eligible weeks; ties count ½"
+          note="Official wins − expected; same eligible weeks"
         />
       </div>
       <Panel
@@ -1443,9 +1506,29 @@ function Luck({ seasons }: { seasons: Season[] }) {
           </label>
         }
       >
+        <div className="table-toolbar">
+          <div className="tabs">
+            <button
+              className={view === "career" ? "selected" : ""}
+              onClick={() => setView("career")}
+            >
+              Career luck
+            </button>
+            <button
+              className={view === "season" ? "selected" : ""}
+              onClick={() => setView("season")}
+            >
+              Manager seasons
+            </button>
+          </div>
+        </div>
         <DataTable
-          rows={rows}
-          rowKey={(r) => r.manager}
+          rows={
+            view === "career"
+              ? rows.map((r) => ({ ...r, year: null as number | null }))
+              : seasonRows
+          }
+          rowKey={(r) => `${r.manager}-${r.year ?? "career"}`}
           initialSort="luck"
           columns={[
             {
@@ -1453,6 +1536,12 @@ function Luck({ seasons }: { seasons: Season[] }) {
               label: "MANAGER",
               value: (r) => r.manager,
               render: (r) => <ManagerName username={r.manager} />,
+            },
+            {
+              key: "year",
+              label: "SEASON",
+              value: (r) => r.year,
+              render: (r) => r.year ?? "Career",
             },
             {
               key: "weeks",
@@ -1487,9 +1576,9 @@ function Luck({ seasons }: { seasons: Season[] }) {
             },
             {
               key: "actual",
-              label: "ACTUAL W*",
+              label: "OFFICIAL W",
               value: (r) => r.actual,
-              render: (r) => fmt(r.actual, 1),
+              render: (r) => fmt(r.actual, 0),
               numeric: true,
             },
             {
@@ -1515,12 +1604,14 @@ function Luck({ seasons }: { seasons: Season[] }) {
         />
       </Panel>
       <InfoNote>
-        *Actual W includes half-wins for ties. Opponent average measures
-        schedule scoring strength in the same eligible weeks (zeros included).
-        The visible minimum defaults to one eligible week. Both zero scores
-        lose. Incomplete weeks are excluded from both expected and actual wins
-        in this view, and never silently filled with zeros. This is a
-        descriptive schedule metric, not a measure of predictive skill.
+        Actual wins are official W outcomes only; official ties add no wins.
+        All-play score ties, including 0–0, receive half-credit in expected
+        wins. Opponent average measures schedule scoring strength in the same
+        eligible weeks (zeros included). The visible minimum defaults to one
+        eligible week. Both zero scores remain official losses. Incomplete weeks
+        are excluded from both expected and actual wins in this view, and never
+        silently filled with zeros. This is a descriptive schedule metric, not a
+        measure of predictive skill.
       </InfoNote>
     </>
   );
@@ -1659,6 +1750,34 @@ function SeasonArchive({
         />
       </div>
       <Panel
+        title="The season, in context"
+        eyebrow={
+          current.verification === "reconciled"
+            ? "SOURCE-RECONCILED REGULAR SEASON"
+            : "SUMMARY WITHHELD / AWAITING RECONCILIATION"
+        }
+      >
+        {current.verification === "reconciled" ? (
+          <div className="dialog-body">
+            <p>
+              {current.year} covers {current.regularSeasonWeeks} regular-season
+              weeks and {current.matchups.length} official matchups.{" "}
+              {standings([current])[0]?.manager} leads the final regular-season
+              standings by wins, then points.{" "}
+              {games([current]).filter((g) => g.score === 0).length} missed
+              submissions remain in the official record. No playoff or
+              championship result is included.
+            </p>
+          </div>
+        ) : (
+          <EmptyState
+            compact
+            title="The season story awaits its receipts."
+            text="Complete the regular-season import and reconcile official results against source standings before publishing a final season summary."
+          />
+        )}
+      </Panel>
+      <Panel
         title={`${current.year} season archive`}
         aside={
           <AverageToggle value={excludeZeros} onChange={setExcludeZeros} />
@@ -1778,6 +1897,13 @@ function MatchupDetail({
           return (
             <div key={r.manager}>
               <h3>{r.manager} · selections</h3>
+              {lineup?.provenance && (
+                <InfoNote>
+                  Lineup source: {lineup.provenance.sourceId} ·{" "}
+                  {lineup.provenance.sheet} ·{" "}
+                  {lineup.provenance.cells.join(", ")}
+                </InfoNote>
+              )}
               {lineup ? (
                 <DataTable
                   rows={lineup.selections}
@@ -1819,7 +1945,8 @@ function DNA({ seasons }: { seasons: Season[] }) {
   const [manager, setManager] = useState("all");
   const [query, setQuery] = useState("");
   const members = [...new Set(seasons.flatMap((s) => s.members))].sort();
-  const selectedManager = manager === "all" ? undefined : manager;
+  const activeManager = members.includes(manager) ? manager : "all";
+  const selectedManager = activeManager === "all" ? undefined : activeManager;
   const players = playerOwnership(seasons, selectedManager);
   const strategy = lineupStrategies(seasons, selectedManager);
   const scores = games(seasons).filter(
@@ -1850,7 +1977,7 @@ function DNA({ seasons }: { seasons: Season[] }) {
           <Users size={14} />
           <select
             aria-label="Filter lineup analytics by manager"
-            value={manager}
+            value={activeManager}
             onChange={(e) => setManager(e.target.value)}
           >
             <option value="all">All managers</option>
@@ -1974,7 +2101,7 @@ function DNA({ seasons }: { seasons: Season[] }) {
 function Hall({ seasons }: { seasons: Season[] }) {
   const [side, setSide] = useState<"glory" | "shame">("glory");
   const entries = records(seasons).filter((r) => r.kind === side);
-  const rows = standings(seasons)
+  const rows = standings(seasons.filter((s) => s.verification === "reconciled"))
     .filter((r) => r.missed > 0)
     .sort((a, b) => b.missed - a.missed);
   return (
@@ -2071,8 +2198,10 @@ function Hall({ seasons }: { seasons: Season[] }) {
       )}
       <InfoNote>
         Every plaque has a calculable rule and links to its underlying matchup.
-        Equal records share credit. Partial imports make these provisional
-        achievements.
+        Equal records share credit. Unverified and partial imports are withheld
+        from awards. Published achievements cover{" "}
+        {seasons.filter((s) => s.verification === "reconciled").length} of{" "}
+        {seasons.length} selected seasons.
       </InfoNote>
     </>
   );

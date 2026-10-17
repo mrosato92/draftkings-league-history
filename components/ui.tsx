@@ -226,3 +226,25 @@ export function ManagerName({ username }: { username: string }) {
     </Link>
   );
 }
+
+export function AverageToggle({
+  value,
+  onChange,
+}: {
+  value: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <label className="toggle-label">
+      <input
+        type="checkbox"
+        checked={value}
+        onChange={(e) => onChange(e.target.checked)}
+      />
+      <span className="toggle" />
+      <span>
+        Exclude missed weeks <span className="muted">(averages)</span>
+      </span>
+    </label>
+  );
+}

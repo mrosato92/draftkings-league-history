@@ -82,6 +82,7 @@ export const seasonSchema = z
         "Expected a season from 2019–2025.",
       ),
     status: z.enum(["pending", "partial", "complete"]),
+    verification: z.enum(["unverified", "reconciled"]).default("unverified"),
     regularSeasonWeeks: z.union([z.literal(14), z.literal(15)]).nullable(),
     members: z.array(usernameSchema).max(16),
     matchups: z.array(
@@ -115,6 +116,10 @@ export const seasonSchema = z
       );
     if (season.status !== "pending" && season.regularSeasonWeeks === null)
       fail("Confirm 14 or 15 regular-season weeks before importing scores.");
+    if (season.verification === "reconciled" && season.status !== "complete")
+      fail(
+        "Only complete seasons reconciled against official results and standings may publish verified records.",
+      );
     const ids = new Set<string>();
     const scores = new Set<string>();
     for (const m of season.matchups) {

@@ -1,7 +1,9 @@
 // SYNTHETIC TEST FIXTURES ONLY. None of these values are imported by the website.
 import { describe, expect, it } from "vitest";
 import {
+  allPlayOutcome,
   completeWeeks,
+  qualifiedLeaders,
   games,
   lineupStrategies,
   longestStreak,
@@ -29,6 +31,7 @@ function season(
   return {
     year: 2019,
     status: "partial",
+    verification: "unverified",
     regularSeasonWeeks: 14,
     members,
     matchups: Array.from({ length: 8 }, (_, i) => ({
@@ -47,6 +50,31 @@ function season(
     })),
     lineups: [],
   };
+}
+function verifiedSeason(input: Season): Season {
+  const result: Season = {
+    ...input,
+    status: "complete",
+    verification: "reconciled",
+    matchups: [...input.matchups],
+  };
+  for (let week = 1; week <= (result.regularSeasonWeeks ?? 0); week++) {
+    for (let pair = 0; pair < 8; pair++) {
+      if (
+        result.matchups.some(
+          (m) => m.week === week && m.home.manager === members[pair * 2],
+        )
+      )
+        continue;
+      result.matchups.push({
+        id: `synthetic-${result.year}-${week}-${pair}`,
+        week,
+        home: { manager: members[pair * 2], score: 90, result: "T" },
+        away: { manager: members[pair * 2 + 1], score: 90, result: "T" },
+      });
+    }
+  }
+  return result;
 }
 function testLineup(): Lineup {
   const slots = [
@@ -214,13 +242,18 @@ describe("schedule luck", () => {
       allPlayWins: 15,
     });
     expect(rows.find((r) => r.manager === members[2])).toMatchObject({
-      expected: 0,
       actual: 0,
-      allPlayLosses: 15,
+      allPlayLosses: 14,
+      allPlayTies: 1,
     });
     const tie = rows.find((r) => r.manager === members[4])!;
     expect(tie.expected).toBeCloseTo((11 + 2 * 0.5) / 15); // 100 ties two other 100s; eleven lower scores.
-    expect(tie.actual).toBe(0.5);
+    expect(tie.actual).toBe(0);
+    expect(tie.luck).toBeCloseTo(-tie.expected);
+    expect(rows.find((r) => r.manager === members[2])?.expected).toBeCloseTo(
+      0.5 / 15,
+    );
+    expect(rows.reduce((n, r) => n + r.expected, 0)).toBeCloseTo(8);
     s.matchups.pop();
     expect(luckTable([s])).toEqual([]);
   });
@@ -239,14 +272,17 @@ describe("records, rivalries and lineup coverage", () => {
     const s = season([
       120, 90, 0, 0, 100, 100, 120, 110, 80, 70, 60, 50, 40, 30, 20, 10,
     ]);
-    const ceilings = records([s]).filter((r) => r.title === "The ceiling");
+    const ceilings = records([verifiedSeason(s)]).filter(
+      (r) => r.title === "The ceiling",
+    );
     expect(ceilings).toHaveLength(2);
     expect(
       ceilings.every((r) => s.matchups.some((m) => m.id === r.game.id)),
     ).toBe(true);
-    expect(records([s]).find((r) => r.title === "The basement")?.value).toBe(
-      10,
-    );
+    expect(
+      records([verifiedSeason(s)]).find((r) => r.title === "The basement")
+        ?.value,
+    ).toBe(10);
     expect(records([])).toEqual([]);
   });
   it("breaks streaks at missing weeks and season boundaries, with source-linked streak records", () => {
@@ -257,7 +293,9 @@ describe("records, rivalries and lineup coverage", () => {
     expect(
       longestStreak([s, { ...season(), year: 2020 }], members[0], "W"),
     ).toBe(2);
-    const record = records([s]).find((r) => r.title === "Heat check");
+    const record = records([verifiedSeason(s)]).find(
+      (r) => r.title === "Heat check",
+    );
     expect(record?.game.id).toBe("2019-w2-test");
     expect(record?.value).toBe(2);
   });
@@ -277,6 +315,56 @@ describe("records, rivalries and lineup coverage", () => {
       stackRate: 1,
     });
     expect(lineupSchema.safeParse(testLineup()).success).toBe(true); // negative player deductions are valid
+  });
+});
+describe("specification regression cases", () => {
+  it("separates official double losses from numerical all-play ties, including negative scores", () => {
+    expect(outcome(0, 0)).toBe("L");
+    expect(allPlayOutcome(0, 0)).toBe("T");
+    expect(outcome(-1, 0)).toBe("W");
+    expect(allPlayOutcome(-1, 0)).toBe("L");
+    const allZeros = luckTable([season(Array(16).fill(0))]);
+    expect(
+      allZeros.every(
+        (r) =>
+          r.actual === 0 &&
+          r.expected === 0.5 &&
+          r.allPlayTies === 15 &&
+          r.luck === -0.5,
+      ),
+    ).toBe(true);
+  });
+  it("never publishes record holders from unverified or partial imports", () => {
+    const raw = season();
+    expect(records([raw])).toEqual([]);
+    expect(
+      records([{ ...verifiedSeason(raw), verification: "unverified" }]),
+    ).toEqual([]);
+    expect(records([verifiedSeason(raw)]).length).toBeGreaterThan(0);
+    expect(
+      seasonSchema.safeParse({ ...raw, verification: "reconciled" }).success,
+    ).toBe(false);
+    expect(seasonSchema.safeParse(verifiedSeason(raw)).success).toBe(true);
+  });
+  it("qualifies scoring averages by included scores and all-play by eligible weeks", () => {
+    const s = season();
+    s.matchups.push({
+      id: "qualification-zero",
+      week: 2,
+      home: { manager: members[0], score: 0, result: "L" },
+      away: { manager: members[1], score: 80, result: "W" },
+    });
+    expect(
+      qualifiedLeaders([s], "wins", 2, true).map((r) => r.manager),
+    ).toContain(members[0]);
+    expect(
+      qualifiedLeaders([s], "average", 2, true).map((r) => r.manager),
+    ).not.toContain(members[0]);
+    expect(
+      qualifiedLeaders([s], "average", 2, false).map((r) => r.manager),
+    ).toContain(members[0]);
+    expect(qualifiedLeaders([s], "allPlayRate", 2)).toEqual([]);
+    expect(qualifiedLeaders([s], "expected", 1)).toHaveLength(16);
   });
 });
 describe("import validation and privacy boundaries", () => {

@@ -10,16 +10,17 @@ No historical data is included yet. Every results-based page requires imports. D
 
 ## Season fields
 
-| Field                | Type                             | Meaning                                                                     |
-| -------------------- | -------------------------------- | --------------------------------------------------------------------------- |
-| `year`               | integer, 2019–2025               | The season in the filename                                                  |
-| `status`             | `pending`, `partial`, `complete` | Honest import status, not a competitive outcome                             |
-| `regularSeasonWeeks` | `14`, `15`, or `null`            | Confirm from the source; only pending seasons may use null                  |
-| `members`            | array of usernames               | Unique members of this season, at most 16; each must exist in managers.json |
-| `matchups`           | array of matchup objects         | Official regular-season head-to-head scores, never synthetic bye results    |
-| `lineups`            | array of lineup objects          | Known, complete nine-selection lineups; missing detail means no entry       |
+| Field                | Type                             | Meaning                                                                                                  |
+| -------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `year`               | integer, 2019–2025               | The season in the filename                                                                               |
+| `verification`       | `unverified` or `reconciled`     | Defaults to unverified; reconciled requires a complete season and manual source/standings reconciliation |
+| `status`             | `pending`, `partial`, `complete` | Honest import status, not a competitive outcome                                                          |
+| `regularSeasonWeeks` | `14`, `15`, or `null`            | Confirm from the source; only pending seasons may use null                                               |
+| `members`            | array of usernames               | Unique members of this season, at most 16; each must exist in managers.json                              |
+| `matchups`           | array of matchup objects         | Official regular-season head-to-head scores, never synthetic bye results                                 |
+| `lineups`            | array of lineup objects          | Known, complete nine-selection lineups; missing detail means no entry                                    |
 
-`pending` requires null weeks and empty members, matchups, and lineups. Switch to `partial` before importing anything. A `complete` season requires exactly 16 members and every manager's score in every confirmed regular-season week (8 matchups per week). Lineup details can remain incomplete even when scores are complete. Completeness never requires fabricated player selections.
+`pending` requires null weeks and empty members, matchups, and lineups. Switch to `partial` before importing anything. A `complete` season requires exactly 16 members and every manager's score in every confirmed regular-season week (8 matchups per week). Lineup details can remain incomplete even when scores are complete. Completeness alone does not verify source accuracy: leave `verification` as `unverified` until official outcomes and totals have been reconciled against the original results and standings. Set `verification: "reconciled"` only after that review. Unverified and partial seasons remain available for exploratory standings, scoring, and luck analysis, but cannot publish record holders or final season summaries. Completeness never requires fabricated player selections.
 
 Partial season rosters and weeks are permitted for staged imports. All-play and expected wins remain disabled for any week without a complete 16-manager roster and all 16 scores. Other statistics describe the imported sample and are labeled provisional.
 
@@ -68,11 +69,11 @@ Official weekly scores are authoritative. Player points are optional; the app do
 - **Career standing:** standings aggregation across imported regular seasons; membership with no scores does not imply participation in a scored game.
 - **Scoring average:** sum of included official scores / number of included official scores. By default zeros count. The optional filter excludes zero scores from this average and the average scoring trend only. Unknown scores never enter the denominator. An empty denominator displays a dash. Unknown or excluded scoring weeks form gaps in trend lines.
 - **Win percentage:** `(wins + ties / 2) / imported games`. Zero-point losses always enter the games denominator.
-- **All-play:** compare the manager's score to the other 15 managers in the same fully imported week. Missed submissions remain automatic losses, even against another zero.
-- **Expected wins:** sum `(weekly all-play wins + weekly all-play ties / 2) / 15`. Weekly actual win equivalents use the same eligible weeks.
-- **Luck:** actual win equivalents minus expected wins. Positive means a beneficial schedule in the imported sample. This is descriptive; incomplete weeks are excluded rather than guessed.
+- **All-play:** compare the manager's numerical score to the other 15 managers in the same fully imported week. All equal scores, including 0–0, are tracked as all-play ties. This hypothetical comparison does not change official automatic losses.
+- **Expected wins:** sum `(weekly all-play wins + weekly all-play ties / 2) / 15`. Actual official wins use the same eligible weeks.
+- **Luck:** official wins minus expected wins. Official ties contribute zero wins to this differential; half-credit applies only to all-play ties within expected wins. Positive means a beneficial schedule in the imported sample. This is descriptive; incomplete weeks are excluded rather than guessed.
 - **Schedule strength:** average actual opponent score across the same complete weeks used for luck; zeros included.
-- **Scoring records:** highest score; closest winning margin; largest winning margin; highest score in a loss; lowest score in a win; lowest nonzero submitted score. All tied holders are retained. The basement explicitly excludes missed submissions. Other official record candidates include zero weeks where eligible. Winning, losing, and missed-submission streaks reset at each season boundary, unknown week, or nonmatching result, and link to the final matchup in the record run.
+- **Scoring records:** highest score; closest winning margin; largest winning margin; highest score in a loss; lowest score in a win; lowest official score (zeros included); lowest nonzero submitted score. Only complete, explicitly source-reconciled seasons qualify for published record holders and awards; the UI discloses that limited scope. All tied holders are retained. The basement explicitly excludes missed submissions. Other official record candidates include zero weeks where eligible. Winning, losing, and missed-submission streaks reset at each season boundary, unknown week, or nonmatching result, and link to the final matchup in the record run.
 - **Fame/Shame:** the same reproducible record calculations, plus the missed-submission count. These are record achievements, not invented championship or playoff honors.
 - **Selection rate:** appearances / detailed lineups in the selected scope. Never inferred contest-wide ownership. Missing lineups are excluded; the coverage percentage reveals the sample size.
 - **QB stack:** lineup with its QB and at least one same-team WR or TE. Does not assume that a same-team RB is a pass catcher.
@@ -84,8 +85,13 @@ Official weekly scores are authoritative. Player points are optional; the app do
 2. In a private working area, extract only the fields listed above. Reconcile usernames and membership for each season. Confirm 14 or 15 regular-season weeks from official records.
 3. Add real usernames to `managers.json`. Populate one season at a time using `partial` until all scores are verified. There is intentionally no public example dataset that could be mistaken for results.
 4. Import official matchups first. Import optional complete lineups independently; score-only weeks are supported everywhere outside lineup-specific analytics.
-5. Run `npm run validate:data`, `npm test`, and `npm run build`. Check the coverage/status labels and a known matchup against its private source.
-6. Inspect `git status --short` and the full staged diff for private fields and files. `.gitignore` helps avoid accidents but cannot sanitize JSON values or files already tracked by Git. Schemas validate shape, not provenance or permission to publish.
-7. Commit only the sanitized public JSON. Push to trigger a Vercel rebuild. New manager and matchup routes are generated at build time.
+5. Reconcile every official W/L/T, standings position, points total, and source reference against the original results and standings. Keep any anomalies in the private review material. Only after review, set `verification` to `reconciled` on complete seasons; never mark unverified history as reconciled just to populate records.
+6. Run `npm run validate:data`, `npm test`, and `npm run build`. Check the coverage/status labels and a known matchup against its private source.
+7. Inspect `git status --short` and the full staged diff for private fields and files. `.gitignore` helps avoid accidents but cannot sanitize JSON values or files already tracked by Git. Schemas validate shape, not provenance or permission to publish.
+8. Commit only the sanitized public JSON. Push to trigger a Vercel rebuild. New manager and matchup routes are generated at build time.
 
 If the official league uses a nonzero tie-resolution policy, request a separate analytics change supported by the original rule before presenting a different result. Never silently invent a tiebreaker.
+
+## Annual release
+
+After the next supported season is completed, review the product's coverage window before adding a new year; the current contract intentionally stops at 2025. For an update inside the supported years: back up private source material outside Git, sanitize imports, reconcile official score/outcome totals and observed lineup coverage, run all required checks, review a protected Vercel preview against the private source, and merge only sanitized data. Verify the production season, one known matchup, and coverage/status labels after deployment. Preserve a Git commit reference for rollback. No live DraftKings API synchronization is assumed.

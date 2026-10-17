@@ -2,6 +2,8 @@ import { test, expect } from "@playwright/test";
 const pages = [
   ["/", "League HQ"],
   ["/managers", "Manager Profiles"],
+  ["/leaderboards", "Leaderboards"],
+  ["/compare", "Comparison Lab"],
   ["/records", "Record Book"],
   ["/rivalries", "Rivalry Center"],
   ["/luck", "Luck Lab"],
@@ -49,7 +51,7 @@ test("search, keyboard shortcuts, metadata status, and methodology", async ({
   await expect(dialog).not.toBeVisible();
   await page.getByRole("button", { name: "Methodology", exact: true }).click();
   await expect(dialog).toContainText(
-    "Two zero scores both earn all-play losses.",
+    "two zero scores tie here, while both remain official losses.",
   );
   await page.getByRole("button", { name: "Close dialog" }).click();
   await expect(dialog).not.toBeVisible();
@@ -121,4 +123,31 @@ test("qualification thresholds and zero-average controls are explicit", async ({
   );
   await page.goto("/luck");
   await expect(page.getByLabel("Luck minimum participation")).toHaveValue("1");
+});
+
+test("new specification views expose denominators and comparison filters", async ({
+  page,
+}) => {
+  await page.goto("/leaderboards");
+  await page
+    .getByLabel("Leaderboard metric", { exact: true })
+    .selectOption("allPlayRate");
+  await expect(
+    page.getByLabel("Career leaderboard minimum participation"),
+  ).toHaveValue("14");
+  await expect(
+    page.getByRole("columnheader", { name: "AP WEEKS" }),
+  ).toBeVisible();
+  await page.goto("/compare");
+  await page.getByRole("checkbox", { name: /Exclude missed weeks/ }).check();
+  await expect(
+    page.getByRole("checkbox", { name: /Exclude missed weeks/ }),
+  ).toBeChecked();
+  await page.goto("/luck");
+  await page
+    .getByRole("button", { name: "Manager seasons", exact: true })
+    .click();
+  await expect(
+    page.getByRole("columnheader", { name: "OFFICIAL W" }),
+  ).toBeVisible();
 });

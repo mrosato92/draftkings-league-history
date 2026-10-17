@@ -2,7 +2,7 @@
 
 A dark sports analytics dashboard for the 2019–2025 regular seasons of a 16-team DraftKings head-to-head fantasy football league. Next.js App Router, TypeScript, Tailwind CSS, Recharts, and validated static JSON. Prepared for Vercel.
 
-**Historical results have not been supplied.** All seven season files are explicitly `pending`. The site renders designed empty states rather than sample managers, invented scores, or fake charts. League-format facts are displayed separately from results. Adding validated data enables every relevant view at the next build.
+**Historical results have not been supplied.** All seven season files are explicitly `pending`. The site renders designed empty states rather than sample managers, invented scores, or fake charts. League-format facts are displayed separately from results. Adding validated data enables exploratory views at the next build; records, awards, and final season summaries additionally require explicit source reconciliation.
 
 ## Develop
 
@@ -28,19 +28,21 @@ npm start               # production server; build first
 
 ## The site
 
-| Section          | Route                               | Available after data import                                             |
-| ---------------- | ----------------------------------- | ----------------------------------------------------------------------- |
-| League HQ        | `/`                                 | Career leaders, scoring trends, record spotlight                        |
-| Manager Profiles | `/managers`, `/managers/[username]` | Career records, season breakdowns, weekly history, statistical rankings |
-| Record Book      | `/records`                          | Score/margin records, tied record holders, matchup evidence             |
-| Rivalry Center   | `/rivalries`                        | Manager comparison, direct matchups, head-to-head records               |
-| Luck Lab         | `/luck`                             | All-play records, expected wins, actual-minus-expected wins             |
-| Season Archives  | `/seasons`                          | Season standings, week filters, official results                        |
-| DraftKings DNA   | `/dna`                              | Player selection rates, salary usage, QB stacks, FLEX usage             |
-| Fame & Shame     | `/hall-of-fame`                     | Calculated achievements, lowlights, missed-submission register          |
-| Matchup receipts | `/matchups/[id]`                    | Both official scores and available player selections                    |
+| Section          | Route                               | Available after data import                                               |
+| ---------------- | ----------------------------------- | ------------------------------------------------------------------------- |
+| League HQ        | `/`                                 | Career leaders, scoring trends, record spotlight                          |
+| Manager Profiles | `/managers`, `/managers/[username]` | Career records, season breakdowns, weekly history, statistical rankings   |
+| Leaderboards     | `/leaderboards`                     | Qualified wins, win %, points, scoring average, all-play %, expected wins |
+| Comparison Lab   | `/compare`                          | Side-by-side totals and rates with season and missed-week filters         |
+| Record Book      | `/records`                          | Score/margin records, tied record holders, matchup evidence               |
+| Rivalry Center   | `/rivalries`                        | Manager comparison, direct matchups, head-to-head records                 |
+| Luck Lab         | `/luck`                             | All-play records, expected wins, actual-minus-expected wins               |
+| Season Archives  | `/seasons`                          | Season standings, week filters, official results                          |
+| DraftKings DNA   | `/dna`                              | Player selection rates, salary usage, QB stacks, FLEX usage               |
+| Fame & Shame     | `/hall-of-fame`                     | Calculated achievements, lowlights, missed-submission register            |
+| Matchup receipts | `/matchups/[id]`                    | Both official scores and available player selections                      |
 
-All sections have season filtering. Leaderboard participation thresholds are visible; scoring-average leaders default to 14 included weeks. Official W/L/T is imported explicitly, with optional sanitized sheet/cell provenance. `?season=2019` links directly to a season scope. Tables support sorting, the manager directory and player list support search, and ⌘/Ctrl+K opens archive search. The average filter excludes only missed submissions; it never changes official totals. Mobile navigation, keyboard dialogs, a skip link, reduced-motion handling, and exact values in tables complement the desktop dashboard.
+All sections have season filtering. Leaderboard participation thresholds are visible; scoring-average leaders default to 14 included weeks. Official W/L/T is imported explicitly, with optional sanitized sheet/cell provenance. Source reconciliation is tracked independently of import completeness. All-play numerical ties include 0–0; official 0–0 remains a double loss. Luck is official wins minus expected wins. `?season=2019` links directly to a season scope. Tables support sorting, the manager directory and player list support search, and ⌘/Ctrl+K opens archive search. The average filter excludes only missed submissions; it never changes official totals. Mobile navigation, keyboard dialogs, a skip link, reduced-motion handling, and exact values in tables complement the desktop dashboard.
 
 ## Import real data safely
 
@@ -64,6 +66,7 @@ This project does not require Vercel-specific runtime configuration or a databas
 - `app/`: static App Router routes, metadata, global design, and error states.
 - `components/dashboard.tsx`: navigation, filters, section views, dialogs, and matchup inspection.
 - `components/ui.tsx`: reusable panels, metrics, sortable tables, empty states, and identity links.
+- `components/leaderboards.tsx`: qualified metric leaders and profile player selections with observed coverage.
 - `components/charts.tsx`: interactive scoring and luck visualizations; empty charts contain no simulated series.
 - `lib/schema.ts`: public data contract and cross-file validation.
 - `lib/data.ts`: explicit build-time file loading; never scans private import folders.
@@ -71,4 +74,6 @@ This project does not require Vercel-specific runtime configuration or a databas
 - `data/`: sanitized public JSON only. All seven seasons start empty.
 - `tests/`: isolated synthetic fixtures and browser checks; never imported by application code.
 
-The concurrent [PROJECT_SPEC.md](PROJECT_SPEC.md) and [AGENTS.md](AGENTS.md) remain the product and engineering guidance. Rules and statistical caveats are documented in [docs/DATA.md](docs/DATA.md) and in the site's Methodology dialog. No affiliation with DraftKings or the NFL is implied.
+The authoritative [PROJECT_SPEC.md](PROJECT_SPEC.md) and [AGENTS.md](AGENTS.md) remain the product and engineering guidance. Rules and statistical caveats are documented in [docs/DATA.md](docs/DATA.md) and in the site's Methodology dialog. No affiliation with DraftKings or the NFL is implied.
+
+The implementation review and remaining data/deployment prerequisites are recorded in [docs/SPEC_REVIEW.md](docs/SPEC_REVIEW.md).

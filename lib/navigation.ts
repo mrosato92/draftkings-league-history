@@ -14,6 +14,20 @@ export const sections = [
     icon: "users",
   },
   {
+    id: "leaderboards",
+    label: "Leaderboards",
+    short: "Leaders",
+    description: "Totals tell a story. Rates bring the context.",
+    icon: "trophy",
+  },
+  {
+    id: "compare",
+    label: "Comparison Lab",
+    short: "Compare",
+    description: "Two managers. One consistent measuring stick.",
+    icon: "flask",
+  },
+  {
     id: "records",
     label: "Record Book",
     short: "Records",

@@ -1,10 +1,15 @@
 import type { League, Season, Matchup } from "./schema";
 
 export type Result = "W" | "L" | "T";
+/** Official zero-loss rule; imported official results remain authoritative. */
 export function outcome(score: number, opponent: number): Result {
   if (score === 0) return "L";
   if (opponent === 0 || score > opponent) return "W";
   return score === opponent ? "T" : "L";
+}
+/** Hypothetical all-play compares scores, including ties between missed submissions. */
+export function allPlayOutcome(score: number, opponent: number): Result {
+  return score > opponent ? "W" : score < opponent ? "L" : "T";
 }
 export type Game = {
   id: string;
@@ -140,7 +145,7 @@ export function luckTable(seasons: Season[]): LuckRow[] {
         };
         const results = weekly
           .filter((other) => other.manager !== g.manager)
-          .map((other) => outcome(g.score, other.score));
+          .map((other) => allPlayOutcome(g.score, other.score));
         const w = results.filter((r) => r === "W").length;
         const t = results.filter((r) => r === "T").length;
         row.weeks++;
@@ -150,7 +155,7 @@ export function luckTable(seasons: Season[]): LuckRow[] {
         row.allPlayTies += t;
         row.allPlayLosses += results.length - w - t;
         row.expected += (w + t * 0.5) / results.length;
-        row.actual += g.result === "W" ? 1 : g.result === "T" ? 0.5 : 0;
+        row.actual += g.result === "W" ? 1 : 0;
         row.luck = row.actual - row.expected;
         rows.set(g.manager, row);
       }
@@ -211,6 +216,10 @@ export type RecordEntry = {
   kind: "glory" | "shame";
 };
 export function records(seasons: Season[]): RecordEntry[] {
+  // Completeness alone is not source reconciliation. Never award unverified records.
+  seasons = seasons.filter(
+    (s) => s.status === "complete" && s.verification === "reconciled",
+  );
   const all = games(seasons);
   if (!all.length) return [];
   const entries: RecordEntry[] = [];
@@ -273,6 +282,15 @@ export function records(seasons: Season[]): RecordEntry[] {
     "Task failed successfully",
     "Lowest score in a win",
     all.filter((g) => g.result === "W"),
+    (g) => g.score,
+    "PTS",
+    "shame",
+    true,
+  );
+  add(
+    "The floor",
+    "Lowest official score (missed submissions included)",
+    all,
     (g) => g.score,
     "PTS",
     "shame",
@@ -423,4 +441,54 @@ export function matchupById(
     const matchup = season.matchups.find((m) => m.id === id);
     if (matchup) return { season, matchup };
   }
+}
+
+/** Totals and rate denominators remain distinct when qualifying leaders. */
+export function leaderboardRows(seasons: Season[], excludeZeros = false) {
+  const luck = new Map(luckTable(seasons).map((row) => [row.manager, row]));
+  return standings(seasons, excludeZeros).map((row) => {
+    const eligible = luck.get(row.manager);
+    return {
+      ...row,
+      eligibleWeeks: eligible?.weeks ?? 0,
+      allPlayRate: eligible
+        ? (eligible.allPlayWins + eligible.allPlayTies / 2) /
+          (eligible.weeks * 15)
+        : null,
+      expected: eligible?.expected ?? null,
+      luck: eligible?.luck ?? null,
+    };
+  });
+}
+export const leaderboardMetrics = [
+  "wins",
+  "winRate",
+  "points",
+  "average",
+  "allPlayRate",
+  "expected",
+] as const;
+export type LeaderboardMetric = (typeof leaderboardMetrics)[number];
+export function qualifiedLeaders(
+  seasons: Season[],
+  metric: LeaderboardMetric,
+  minimum: number,
+  excludeZeros = false,
+) {
+  return leaderboardRows(seasons, excludeZeros)
+    .filter((row) => {
+      const denominator =
+        metric === "average"
+          ? row.averageGames
+          : ["allPlayRate", "expected"].includes(metric)
+            ? row.eligibleWeeks
+            : row.games;
+      return denominator >= minimum && row[metric] !== null;
+    })
+    .sort(
+      (a, b) =>
+        (b[metric] ?? -Infinity) - (a[metric] ?? -Infinity) ||
+        b.points - a.points ||
+        a.manager.localeCompare(b.manager),
+    );
 }
