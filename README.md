@@ -2,7 +2,9 @@
 
 A dark sports analytics dashboard for the 2019–2025 regular seasons of a 16-team DraftKings head-to-head fantasy football league. Next.js App Router, TypeScript, Tailwind CSS, Recharts, and validated static JSON. Prepared for Vercel.
 
-**Historical results have not been supplied.** All seven season files are explicitly `pending`. The site renders designed empty states rather than sample managers, invented scores, or fake charts. League-format facts are displayed separately from results. Adding validated data enables exploratory views at the next build; records, awards, and final season summaries additionally require explicit source reconciliation.
+**Historical results are imported and source-reconciled:** 824 matchups, 1,648 manager-week scores, 26 public usernames, 103 regular-season weeks, and 12 zero-point missed submissions across 2019–2025. All seven season files are complete and reconciled. Scores, official W/L, opponent pairings, and season standings were checked against the supplied private workbooks; see [the import audit](docs/HISTORY_IMPORT_REPORT.md).
+
+**Player-level selections are not imported.** All 1,648 scores remain valid while lineup coverage is explicitly zero. DraftKings DNA and profile-selection panels show honest unavailable-data states. Original spreadsheets and contact information remain outside this repository.
 
 ## Develop
 
@@ -17,7 +19,7 @@ In a shell with a restricted home directory, add `--cache /tmp/dk-npm-cache` imm
 
 ```sh
 npm run validate:data   # validate sanitized imports, membership, weeks, and lineups
-npm test                # synthetic, test-only analytics and schema regression tests
+npm test                # analytics regressions and full historical-import reconciliation
 npm run lint
 npm run typecheck
 npm run build
@@ -28,7 +30,7 @@ npm start               # production server; build first
 
 ## The site
 
-| Section          | Route                               | Available after data import                                               |
+| Section          | Route                               | Historical analytics                                                      |
 | ---------------- | ----------------------------------- | ------------------------------------------------------------------------- |
 | League HQ        | `/`                                 | Career leaders, scoring trends, record spotlight                          |
 | Manager Profiles | `/managers`, `/managers/[username]` | Career records, season breakdowns, weekly history, statistical rankings   |
@@ -71,9 +73,11 @@ This project does not require Vercel-specific runtime configuration or a databas
 - `lib/schema.ts`: public data contract and cross-file validation.
 - `lib/data.ts`: explicit build-time file loading; never scans private import folders.
 - `lib/analytics.ts`: pure functions for standings, all-play/luck, records, rivalries, and lineup tendencies.
-- `data/`: sanitized public JSON only. All seven seasons start empty.
-- `tests/`: isolated synthetic fixtures and browser checks; never imported by application code.
+- `data/`: complete, source-reconciled sanitized results for 2019–2025; no raw workbooks or player selections.
+- `tests/`: synthetic rule regressions, independent historical-data oracles, package checksums, and populated production-browser checks; never imported by application code.
 
 The authoritative [PROJECT_SPEC.md](PROJECT_SPEC.md) and [AGENTS.md](AGENTS.md) remain the product and engineering guidance. Rules and statistical caveats are documented in [docs/DATA.md](docs/DATA.md) and in the site's Methodology dialog. No affiliation with DraftKings or the NFL is implied.
 
 The implementation review and remaining data/deployment prerequisites are recorded in [docs/SPEC_REVIEW.md](docs/SPEC_REVIEW.md).
+
+The sanitized package handoff is preserved in [IMPORT_NOTES.md](IMPORT_NOTES.md). Original workbooks were used only for private verification; source-cell aliases are documented in the import report.

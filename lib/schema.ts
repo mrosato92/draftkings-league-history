@@ -91,7 +91,11 @@ export const seasonSchema = z
           .string()
           .min(1)
           .max(100)
-          .regex(/^[A-Za-z0-9_-]+$/),
+          .regex(/^[A-Za-z0-9_.-]+$/)
+          .refine(
+            (id) => id !== "." && id !== "..",
+            "Matchup IDs cannot be URL dot segments.",
+          ),
         week: z.number().int().min(1).max(15),
         home: resultSchema,
         away: resultSchema,

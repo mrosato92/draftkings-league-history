@@ -1,6 +1,6 @@
 # Public data contract and import guide
 
-No historical data is included yet. Every results-based page requires imports. Do not infer scores, managers, membership, week counts, or player selections from the league's format.
+The 2019–2025 historical results are imported: 824 matchups, 1,648 manager-week scores, 26 public usernames, and 12 missed submissions. All seven seasons are complete and reconciled against the supplied private workbooks. Detailed player selections are not yet imported. See [HISTORY_IMPORT_REPORT.md](HISTORY_IMPORT_REPORT.md) for source reconciliation, rounding, and coverage. The contract below also governs future corrections and lineup imports.
 
 ## Files
 
@@ -28,7 +28,7 @@ Partial season rosters and weeks are permitted for staged imports. All-play and 
 
 Each matchup has exactly these fields:
 
-- `id`: a globally unique, permanent URL-safe identifier (letters, digits, underscores, hyphens), such as a season/week/pairing key. Keep it stable so record links don't break.
+- `id`: a globally unique, permanent URL-safe identifier (letters, digits, dots, underscores, hyphens; never the standalone URL dot segments `.` or `..`), such as a season/week/pairing key. Keep it stable so record links don't break.
 - `week`: integer 1 through the confirmed regular-season week count. Never import playoff games.
 - `home` and `away`: each has `manager` (registered season member), `score` (finite official numeric score), and **`result` (`W`, `L`, or `T`) explicitly transcribed from official results**. Home/away is storage orientation, not a home-field advantage.
 

@@ -50,3 +50,7 @@ These are pending milestones, not completed historical findings:
 The review adds unit regression cases and extends the production-browser suite to the new sections, thresholds, comparison control, and season luck view. Run `npm run validate:data`, `npm test`, `npm run lint`, `npm run typecheck`, `npm run build`, and `npm run test:e2e`. Browser checks exercise the truthful empty-data application; unit fixtures are synthetic, isolated under `tests/`, and never imported by the website.
 
 Verified in this review: **20 unit tests and 16 production-browser tests passed**, along with data validation, lint, type checking, and production build. All seven public season files remain pending and unverified. The authoritative specification and agent instructions were preserved.
+
+## Historical import follow-up
+
+The missing-source/data findings above describe the initial review. The user subsequently supplied sanitized 2019–2025 JSON and all seven private workbooks. The historical results have now been imported and individually reconciled against their source schedule rows and season standings; see [HISTORY_IMPORT_REPORT.md](HISTORY_IMPORT_REPORT.md). The earlier pending-data and unverified-identity limitations are resolved. Player-selection extraction and external Vercel deployment verification remain separate from this score import.

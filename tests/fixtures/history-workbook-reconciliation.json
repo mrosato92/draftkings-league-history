@@ -1,0 +1,72 @@
+[
+  {
+    "year": 2019,
+    "sourceId": "season_2019",
+    "managerWeeksVerified": 224,
+    "standingsRowsVerified": 16,
+    "sourceScoreMaxRoundingDelta": "0.00001",
+    "sourceTotalMaxRoundingDelta": "0.00001",
+    "sourceWorkbookSha256": "6bb39d841058f29d5d34cdc2bbdede17538e940805cad80f254aec11b35c2cdc",
+    "seasonStandingsLeader": "ChiefGoonba"
+  },
+  {
+    "year": 2020,
+    "sourceId": "season_2020",
+    "managerWeeksVerified": 224,
+    "standingsRowsVerified": 16,
+    "sourceScoreMaxRoundingDelta": "0.00002",
+    "sourceTotalMaxRoundingDelta": "0.000035",
+    "sourceWorkbookSha256": "576bca56bd85c0001659c1abbded70419b797db11c9a9cc29d74ce6cf2c0a187",
+    "seasonStandingsLeader": "jkeenan4"
+  },
+  {
+    "year": 2021,
+    "sourceId": "season_2021",
+    "managerWeeksVerified": 240,
+    "standingsRowsVerified": 16,
+    "sourceScoreMaxRoundingDelta": "0.00003",
+    "sourceTotalMaxRoundingDelta": "0.000055",
+    "sourceWorkbookSha256": "2c5daca8d5d93b2e1683e81fc3f9374d7d20c79f10dd6ae58fa7509c8f41c1ab",
+    "seasonStandingsLeader": "kjrosato"
+  },
+  {
+    "year": 2022,
+    "sourceId": "season_2022",
+    "managerWeeksVerified": 240,
+    "standingsRowsVerified": 16,
+    "sourceScoreMaxRoundingDelta": "0.00002",
+    "sourceTotalMaxRoundingDelta": "0.000055",
+    "sourceWorkbookSha256": "01eecf5c2906a467ad6a195142a002ec2a37b9b8b36f01ef7d12a79facb94db1",
+    "seasonStandingsLeader": "Dlegz123"
+  },
+  {
+    "year": 2023,
+    "sourceId": "season_2023",
+    "managerWeeksVerified": 240,
+    "standingsRowsVerified": 16,
+    "sourceScoreMaxRoundingDelta": "0.00002",
+    "sourceTotalMaxRoundingDelta": "0.000056",
+    "sourceWorkbookSha256": "ec4fc621b7a1e26f6fac61528a7740d30c6969289ea6832d772f7bcb4fc0f001",
+    "seasonStandingsLeader": "mrosato92"
+  },
+  {
+    "year": 2024,
+    "sourceId": "season_2024",
+    "managerWeeksVerified": 240,
+    "standingsRowsVerified": 16,
+    "sourceScoreMaxRoundingDelta": "0.00002",
+    "sourceTotalMaxRoundingDelta": "0.000058",
+    "sourceWorkbookSha256": "bf5e8ad53460a48696a14ef30b870536165afd5886c3758546d66edb006abae6",
+    "seasonStandingsLeader": "smallery"
+  },
+  {
+    "year": 2025,
+    "sourceId": "season_2025",
+    "managerWeeksVerified": 240,
+    "standingsRowsVerified": 16,
+    "sourceScoreMaxRoundingDelta": "0.00003",
+    "sourceTotalMaxRoundingDelta": "0.00004",
+    "sourceWorkbookSha256": "26fd7d467d6f2b0c159233ea4271a43fa59ba8ef15839543ad0f8656fa20a777",
+    "seasonStandingsLeader": "arkazemi"
+  }
+]

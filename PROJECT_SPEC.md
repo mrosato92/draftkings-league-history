@@ -7,9 +7,9 @@ Build a polished, desktop-first, publicly accessible historical analytics site f
 Original yearly workbooks are the source of truth and may be provided separately; **do not assume they are in this repository**. Official Schedule/Results sheets govern matchup outcomes and scores; standings sheets are used for reconciliation. Individual `Week X` sheets provide DraftKings lineups and player-level data. Some manually submitted lineups have official scores but no selection details. Preserve source workbook, sheet, and cell provenance when feasible. Never invent results, player picks, or missing details. Historical figures mentioned in conversations are provisional until independently checked against source files.
 
 ## League rules
-- Use **DraftKings username** as the stable unique manager ID. Usernames have never changed. Membership varies across seasons; there are 16 teams per season and 26 unique usernames were identified in a prior audit (revalidate).
+- Use **DraftKings username** as the stable unique manager ID. Usernames have never changed. Membership varies across seasons; there are 16 teams per season and 26 unique usernames are verified in the imported 2019–2025 results (see `docs/HISTORY_IMPORT_REPORT.md`).
 - **Regular season only.** Exclude playoff brackets, playoff results, championships, and championship awards until verified playoff data is supplied.
-- Season lengths vary: 14 weeks in 2019–2020, 15 weeks in 2021–2025 (verify from source).
+- Season lengths vary: 14 weeks in 2019–2020, 15 weeks in 2021–2025 (verified against the supplied source workbooks).
 - Rank standings by wins, then points for. Historical week-by-week standings may appear in source sheets.
 - A zero score means missed submission and **automatic loss**, including if both competitors score zero. Do not convert a 0–0 matchup to a tie. Track official results explicitly rather than deriving winner solely from scores.
 - No canceled/omitted regular-season competition weeks.
@@ -56,4 +56,4 @@ Never commit original workbooks containing phone numbers/emails, private partici
 7. Document annual import and release procedure.
 
 ## Status
-Codex initial build has been initiated separately; do not assume completion. Earlier chat discussed a prototype ZIP and CSVs, but these assets must be provided or verified before treating them as available. Avoid publishing provisional record holders without validation.
+The website implementation and sanitized 2019–2025 results are present: 824 matchups, 1,648 manager-week scores, 26 public usernames, and 12 missed submissions across 103 regular-season weeks. Every manager-week source row and all seven final regular-season standings have been reconciled against the user-supplied private workbooks; see `docs/HISTORY_IMPORT_REPORT.md`. Original workbooks and contact rosters remain outside the public repository. No player-level selections have been imported or invented; lineup extraction is still a separate milestone. GitHub delivery supports the configured Vercel automatic deployment; live deployment success must be verified separately.

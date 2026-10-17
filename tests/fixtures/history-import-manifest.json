@@ -1,0 +1,414 @@
+{
+  "packageSha256": "17377a65341b8429b56459bed2c2d1eb958aa92af6392c26bc527cc4eb2ffcd5",
+  "files": {
+    "data/managers.json": "b3833d279de455a4ccf7a64cac8b7dc9a1aa101661e3470e7aa6223e6804c02f",
+    "data/seasons/2019.json": "fbcec9be16007a8f7fbb68f51db519e741b56ad9d4167aa769d2feadaf83a212",
+    "data/seasons/2020.json": "c8c7047f6e090cb8d7d6edf8c78a235db06fb8456b0d504866f9aef0ce80d497",
+    "data/seasons/2021.json": "56217a58a5baa57155a5cec8d5168fd2273ca4eb27aa371daa2c3405177547bf",
+    "data/seasons/2022.json": "5a090e407ec6cc7ea283018c3e5e2705b1996599909e09f92be4f0f7f2380276",
+    "data/seasons/2023.json": "9d8a6c76afc62101049ca4dd876c70c7c86adb3fbc3ebea9e7ce04c3ebef71b2",
+    "data/seasons/2024.json": "445693c1dc9be4b147e6c3675a920acb389593072e9f3d878ffc3e0a8af2996c",
+    "data/seasons/2025.json": "cc7f2751995f253a23ca09ee5db6af3c70d155bb9531fbfb6cc76cad44ea6cbf"
+  },
+  "seasons": [
+    {
+      "year": 2019,
+      "weeks": 14,
+      "matchups": 112,
+      "scores": 224,
+      "zeros": 3,
+      "wins": 112,
+      "losses": 112,
+      "ties": 0,
+      "points": "29369.90"
+    },
+    {
+      "year": 2020,
+      "weeks": 14,
+      "matchups": 112,
+      "scores": 224,
+      "zeros": 1,
+      "wins": 112,
+      "losses": 112,
+      "ties": 0,
+      "points": "29442.26"
+    },
+    {
+      "year": 2021,
+      "weeks": 15,
+      "matchups": 120,
+      "scores": 240,
+      "zeros": 2,
+      "wins": 120,
+      "losses": 120,
+      "ties": 0,
+      "points": "30604.96"
+    },
+    {
+      "year": 2022,
+      "weeks": 15,
+      "matchups": 120,
+      "scores": 240,
+      "zeros": 1,
+      "wins": 120,
+      "losses": 120,
+      "ties": 0,
+      "points": "30027.64"
+    },
+    {
+      "year": 2023,
+      "weeks": 15,
+      "matchups": 120,
+      "scores": 240,
+      "zeros": 2,
+      "wins": 120,
+      "losses": 120,
+      "ties": 0,
+      "points": "30536.72"
+    },
+    {
+      "year": 2024,
+      "weeks": 15,
+      "matchups": 120,
+      "scores": 240,
+      "zeros": 1,
+      "wins": 120,
+      "losses": 120,
+      "ties": 0,
+      "points": "29455.96"
+    },
+    {
+      "year": 2025,
+      "weeks": 15,
+      "matchups": 120,
+      "scores": 240,
+      "zeros": 2,
+      "wins": 120,
+      "losses": 120,
+      "ties": 0,
+      "points": "31027.78"
+    }
+  ],
+  "career": [
+    {
+      "manager": "3liManning",
+      "wins": 31,
+      "losses": 42,
+      "ties": 0,
+      "points": "8565.90",
+      "games": 73,
+      "zeros": 3
+    },
+    {
+      "manager": "notrheelyhere",
+      "wins": 13,
+      "losses": 15,
+      "ties": 0,
+      "points": "3808.86",
+      "games": 28,
+      "zeros": 0
+    },
+    {
+      "manager": "ChiefGoonba",
+      "wins": 20,
+      "losses": 23,
+      "ties": 0,
+      "points": "5720.54",
+      "games": 43,
+      "zeros": 1
+    },
+    {
+      "manager": "kjrosato",
+      "wins": 52,
+      "losses": 51,
+      "ties": 0,
+      "points": "13604.04",
+      "games": 103,
+      "zeros": 0
+    },
+    {
+      "manager": "G.Logan319",
+      "wins": 6,
+      "losses": 8,
+      "ties": 0,
+      "points": "1703.34",
+      "games": 14,
+      "zeros": 1
+    },
+    {
+      "manager": "amast5",
+      "wins": 32,
+      "losses": 41,
+      "ties": 0,
+      "points": "9150.68",
+      "games": 73,
+      "zeros": 0
+    },
+    {
+      "manager": "OldMoneyStacks",
+      "wins": 47,
+      "losses": 56,
+      "ties": 0,
+      "points": "13099.80",
+      "games": 103,
+      "zeros": 0
+    },
+    {
+      "manager": "reggiemonster",
+      "wins": 48,
+      "losses": 55,
+      "ties": 0,
+      "points": "13470.04",
+      "games": 103,
+      "zeros": 0
+    },
+    {
+      "manager": "brettalexander23",
+      "wins": 62,
+      "losses": 41,
+      "ties": 0,
+      "points": "13780.42",
+      "games": 103,
+      "zeros": 0
+    },
+    {
+      "manager": "jpalladino91",
+      "wins": 7,
+      "losses": 7,
+      "ties": 0,
+      "points": "1677.46",
+      "games": 14,
+      "zeros": 1
+    },
+    {
+      "manager": "jkeenan4",
+      "wins": 56,
+      "losses": 47,
+      "ties": 0,
+      "points": "13658.26",
+      "games": 103,
+      "zeros": 1
+    },
+    {
+      "manager": "tkerensky",
+      "wins": 5,
+      "losses": 9,
+      "ties": 0,
+      "points": "1809.10",
+      "games": 14,
+      "zeros": 0
+    },
+    {
+      "manager": "missmoneystacks",
+      "wins": 32,
+      "losses": 41,
+      "ties": 0,
+      "points": "8735.42",
+      "games": 73,
+      "zeros": 0
+    },
+    {
+      "manager": "smallery",
+      "wins": 63,
+      "losses": 40,
+      "ties": 0,
+      "points": "13605.26",
+      "games": 103,
+      "zeros": 0
+    },
+    {
+      "manager": "mrosato92",
+      "wins": 58,
+      "losses": 45,
+      "ties": 0,
+      "points": "13889.72",
+      "games": 103,
+      "zeros": 0
+    },
+    {
+      "manager": "tommyjz28",
+      "wins": 17,
+      "losses": 11,
+      "ties": 0,
+      "points": "3697.26",
+      "games": 28,
+      "zeros": 1
+    },
+    {
+      "manager": "Cmack2023",
+      "wins": 29,
+      "losses": 30,
+      "ties": 0,
+      "points": "7510.78",
+      "games": 59,
+      "zeros": 0
+    },
+    {
+      "manager": "Guardshark",
+      "wins": 37,
+      "losses": 52,
+      "ties": 0,
+      "points": "10734.96",
+      "games": 89,
+      "zeros": 1
+    },
+    {
+      "manager": "molone96",
+      "wins": 47,
+      "losses": 42,
+      "ties": 0,
+      "points": "11461.92",
+      "games": 89,
+      "zeros": 0
+    },
+    {
+      "manager": "Dlegz123",
+      "wins": 44,
+      "losses": 31,
+      "ties": 0,
+      "points": "9590.50",
+      "games": 75,
+      "zeros": 1
+    },
+    {
+      "manager": "Zacharylichtman",
+      "wins": 32,
+      "losses": 43,
+      "ties": 0,
+      "points": "9290.20",
+      "games": 75,
+      "zeros": 0
+    },
+    {
+      "manager": "mmayeski",
+      "wins": 26,
+      "losses": 34,
+      "ties": 0,
+      "points": "7032.74",
+      "games": 60,
+      "zeros": 0
+    },
+    {
+      "manager": "mszawaluk3",
+      "wins": 11,
+      "losses": 19,
+      "ties": 0,
+      "points": "3724.94",
+      "games": 30,
+      "zeros": 0
+    },
+    {
+      "manager": "arkazemi",
+      "wins": 20,
+      "losses": 10,
+      "ties": 0,
+      "points": "4058.30",
+      "games": 30,
+      "zeros": 0
+    },
+    {
+      "manager": "ljhaddock",
+      "wins": 13,
+      "losses": 17,
+      "ties": 0,
+      "points": "3460.60",
+      "games": 30,
+      "zeros": 1
+    },
+    {
+      "manager": "busta1030",
+      "wins": 16,
+      "losses": 14,
+      "ties": 0,
+      "points": "3624.18",
+      "games": 30,
+      "zeros": 1
+    }
+  ],
+  "zeros": [
+    {
+      "year": 2019,
+      "week": 11,
+      "manager": "tommyjz28",
+      "id": "2019-w11-ChiefGoonba-tommyjz28",
+      "result": "L"
+    },
+    {
+      "year": 2019,
+      "week": 12,
+      "manager": "G.Logan319",
+      "id": "2019-w12-G.Logan319-tommyjz28",
+      "result": "L"
+    },
+    {
+      "year": 2019,
+      "week": 12,
+      "manager": "jpalladino91",
+      "id": "2019-w12-jpalladino91-mrosato92",
+      "result": "L"
+    },
+    {
+      "year": 2020,
+      "week": 7,
+      "manager": "3liManning",
+      "id": "2020-w07-3liManning-jkeenan4",
+      "result": "L"
+    },
+    {
+      "year": 2021,
+      "week": 6,
+      "manager": "ChiefGoonba",
+      "id": "2021-w06-ChiefGoonba-amast5",
+      "result": "L"
+    },
+    {
+      "year": 2021,
+      "week": 10,
+      "manager": "Dlegz123",
+      "id": "2021-w10-Dlegz123-Guardshark",
+      "result": "L"
+    },
+    {
+      "year": 2022,
+      "week": 3,
+      "manager": "3liManning",
+      "id": "2022-w03-3liManning-mmayeski",
+      "result": "L"
+    },
+    {
+      "year": 2023,
+      "week": 4,
+      "manager": "3liManning",
+      "id": "2023-w04-3liManning-Cmack2023",
+      "result": "L"
+    },
+    {
+      "year": 2023,
+      "week": 9,
+      "manager": "jkeenan4",
+      "id": "2023-w09-3liManning-jkeenan4",
+      "result": "L"
+    },
+    {
+      "year": 2024,
+      "week": 6,
+      "manager": "busta1030",
+      "id": "2024-w06-brettalexander23-busta1030",
+      "result": "L"
+    },
+    {
+      "year": 2025,
+      "week": 11,
+      "manager": "ljhaddock",
+      "id": "2025-w11-arkazemi-ljhaddock",
+      "result": "L"
+    },
+    {
+      "year": 2025,
+      "week": 14,
+      "manager": "Guardshark",
+      "id": "2025-w14-Guardshark-OldMoneyStacks",
+      "result": "L"
+    }
+  ]
+}

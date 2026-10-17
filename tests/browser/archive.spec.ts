@@ -46,7 +46,7 @@ test("search, keyboard shortcuts, metadata status, and methodology", async ({
   await page.getByRole("button", { name: "Data status", exact: true }).click();
   await expect(dialog).toContainText("2019");
   await expect(dialog).toContainText("2025");
-  await expect(dialog.getByText("pending", { exact: true })).toHaveCount(7);
+  await expect(dialog.getByText("complete", { exact: true })).toHaveCount(7);
   await page.keyboard.press("Escape");
   await expect(dialog).not.toBeVisible();
   await page.getByRole("button", { name: "Methodology", exact: true }).click();
