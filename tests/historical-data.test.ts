@@ -1,3 +1,5 @@
+import { canonical } from "./helpers/canonical";
+import dnaManifest from "./fixtures/dna-import-manifest.json";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
@@ -39,12 +41,23 @@ function sourceRows(seasons: Season[]) {
   );
 }
 describe("2019–2025 historical import", () => {
-  it("preserves all eight supplied JSON files byte-for-byte", () => {
+  it("preserves official score data and usernames while allowing verified lineup imports", () => {
     for (const [file, hash] of Object.entries(manifest.files)) {
-      expect(
-        createHash("sha256").update(readFileSync(file)).digest("hex"),
-        file,
-      ).toBe(hash);
+      const raw = readFileSync(file);
+      if (file.endsWith("managers.json"))
+        expect(createHash("sha256").update(raw).digest("hex"), file).toBe(hash);
+      else {
+        const source = JSON.parse(raw.toString());
+        source.lineups = [];
+        expect(
+          createHash("sha256").update(canonical(source)).digest("hex"),
+          file,
+        ).toBe(
+          dnaManifest.officialProjection[
+            String(source.year) as keyof typeof dnaManifest.officialProjection
+          ],
+        );
+      }
     }
   });
   it("contains exactly 824 matchups, 1648 scores, 26 identities, 103 weeks and 12 no-shows", () => {
@@ -360,7 +373,7 @@ describe("2019–2025 historical import", () => {
         all.some((g) => g.id === r.game.id && g.manager === r.game.manager),
       ),
     ).toBe(true);
-    expect(league.seasons.flatMap((s) => s.lineups)).toHaveLength(0);
+    expect(league.seasons.flatMap((s) => s.lineups)).toHaveLength(1574);
   });
   it("supports public username punctuation in stable matchup IDs without accepting path traversal", () => {
     const s = league.seasons[0],

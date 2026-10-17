@@ -18,7 +18,11 @@ const provenanceSchema = z.strictObject({
     .min(1)
     .max(60)
     .regex(/^[A-Za-z0-9_-]+$/),
-  sheet: z.string().regex(/^(Schedule\/Results|Standings|Week [1-9][0-9]?)$/),
+  sheet: z
+    .string()
+    .regex(
+      /^(Schedule\/Results|Standings|Week [1-9][0-9]?|Results_W[1-9][0-9]?)$/,
+    ),
   cells: z
     .array(
       z.string().regex(/^[A-Z]{1,3}[1-9][0-9]*(?::[A-Z]{1,3}[1-9][0-9]*)?$/),
@@ -31,12 +35,12 @@ const resultSchema = z.strictObject({
   result: officialResultSchema,
 });
 const selectionSchema = z.strictObject({
-  playerId: z.string().min(1),
+  playerId: z.string().min(1).nullable().optional(),
   name: z.string().min(1).max(100),
-  team: z.string().min(2).max(5),
-  position: z.enum(["QB", "RB", "WR", "TE", "DST"]),
+  team: z.string().min(2).max(5).nullable().optional(),
+  position: z.enum(["QB", "RB", "WR", "TE", "DST"]).nullable(),
   slot: z.enum(["QB", "RB1", "RB2", "WR1", "WR2", "WR3", "TE", "FLEX", "DST"]),
-  salary: z.number().int().nonnegative(),
+  salary: z.number().int().nonnegative().nullable().optional(),
   points: scoreSchema.optional(),
 });
 export const lineupSchema = z
@@ -52,12 +56,18 @@ export const lineupSchema = z
         code: "custom",
         message: "Nine unique roster slots are required.",
       });
-    if (new Set(lineup.selections.map((s) => s.playerId)).size !== 9)
+    if (
+      new Set(
+        lineup.selections.map((s) =>
+          s.playerId ? `id:${s.playerId}` : `name:${s.name}`,
+        ),
+      ).size !== 9
+    )
       ctx.addIssue({
         code: "custom",
         message: "A player may only appear once in a lineup.",
       });
-    if (lineup.selections.reduce((sum, s) => sum + s.salary, 0) > 50000)
+    if (lineup.selections.reduce((sum, s) => sum + (s.salary ?? 0), 0) > 50000)
       ctx.addIssue({
         code: "custom",
         message: "Lineup exceeds the $50,000 salary cap.",
@@ -65,7 +75,8 @@ export const lineupSchema = z
     for (const s of lineup.selections) {
       const allowed =
         s.slot === "FLEX" ? ["RB", "WR", "TE"] : [s.slot.replace(/[123]$/, "")];
-      if (!allowed.includes(s.position))
+      if (s.position === null && s.slot === "FLEX") continue;
+      if (s.position === null || !allowed.includes(s.position))
         ctx.addIssue({
           code: "custom",
           message: `Invalid position for ${s.slot}.`,

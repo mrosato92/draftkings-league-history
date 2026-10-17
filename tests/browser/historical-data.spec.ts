@@ -50,12 +50,18 @@ test("real record links show authoritative scores, provenance and unavailable se
   });
   await expect(receipt).toContainText("223.06");
   await expect(receipt).toContainText("season_2019");
+  const source = league.seasons[0];
+  const details = source.lineups.filter(
+    (l) => l.week === 1 && ["ChiefGoonba", "kjrosato"].includes(l.manager),
+  );
   await expect(
     receipt.getByRole("heading", {
       name: "Score retained. Selections unavailable.",
       exact: true,
     }),
-  ).toHaveCount(2);
+  ).toHaveCount(2 - details.length);
+  for (const l of details)
+    await expect(receipt).toContainText(l.selections[0].name);
 });
 test("username periods survive manager routing and source matchup receipts", async ({
   page,
@@ -126,17 +132,17 @@ test("expected-win leaders and rivalry histories populate from the actual score 
   });
   await expect(history.getByRole("row")).toHaveCount(expected + 1);
 });
-test("DNA truthfully reports zero observed lineups while retaining all official scores", async ({
+test("DNA reports verified selection coverage while retaining all official scores", async ({
   page,
 }) => {
   await page.goto("/dna");
   await expect(
     page.locator(".metric").filter({ hasText: "VERIFIED LINEUPS" }),
-  ).toContainText("0");
+  ).toContainText("1,574");
   await expect(
     page.locator(".metric").filter({ hasText: "VERIFIED LINEUPS" }),
   ).toContainText("1648 official scores");
   await expect(
     page.locator(".metric").filter({ hasText: "LINEUP COVERAGE" }),
-  ).toContainText("0.0%");
+  ).toContainText("95.5%");
 });

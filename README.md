@@ -4,7 +4,7 @@ A dark sports analytics dashboard for the 2019–2025 regular seasons of a 16-te
 
 **Historical results are imported and source-reconciled:** 824 matchups, 1,648 manager-week scores, 26 public usernames, 103 regular-season weeks, and 12 zero-point missed submissions across 2019–2025. All seven season files are complete and reconciled. Scores, official W/L, opponent pairings, and season standings were checked against the supplied private workbooks; see [the import audit](docs/HISTORY_IMPORT_REPORT.md).
 
-**Player-level selections are not imported.** All 1,648 scores remain valid while lineup coverage is explicitly zero. DraftKings DNA and profile-selection panels show honest unavailable-data states. Original spreadsheets and contact information remain outside this repository.
+**DraftKings DNA now includes 1,574 reconciled nine-selection lineups (14,166 picks), covering 95.51% of the 1,648 official manager-weeks.** The 74 unavailable lineups remain unavailable, including 62 nonzero-scoring weeks and 12 missed submissions. Forty-four FLEX positions remain unknown; all their player selections are retained. Stable player IDs, salaries, NFL teams, and per-player scores were not supplied and are not invented. Salary utilization and QB stacking remain unavailable. See [the DNA import audit](docs/DNA_IMPORT_REPORT.md). Original spreadsheets and contact information remain outside this repository.
 
 ## Develop
 
@@ -69,11 +69,14 @@ This project does not require Vercel-specific runtime configuration or a databas
 - `components/dashboard.tsx`: navigation, filters, section views, dialogs, and matchup inspection.
 - `components/ui.tsx`: reusable panels, metrics, sortable tables, empty states, and identity links.
 - `components/leaderboards.tsx`: qualified metric leaders and profile player selections with observed coverage.
+- `components/dna.tsx`: manager/season/week DNA filters, player search, positions, repeat appearances, coverage tables, and paired manager comparisons.
+- `lib/dna.ts`: pure selection and coverage analytics; raw-label identity caveats, null handling, and paired-week overlap.
+- `lib/dashboard-data.ts`: limits lineup payloads to relevant pages while preserving full archive coverage counts.
 - `components/charts.tsx`: interactive scoring and luck visualizations; empty charts contain no simulated series.
 - `lib/schema.ts`: public data contract and cross-file validation.
 - `lib/data.ts`: explicit build-time file loading; never scans private import folders.
 - `lib/analytics.ts`: pure functions for standings, all-play/luck, records, rivalries, and lineup tendencies.
-- `data/`: complete, source-reconciled sanitized results for 2019–2025; no raw workbooks or player selections.
+- `data/`: complete, source-reconciled sanitized results for 2019–2025; no raw workbooks; 1,574 verified selection-only lineups.
 - `tests/`: synthetic rule regressions, independent historical-data oracles, package checksums, and populated production-browser checks; never imported by application code.
 
 The authoritative [PROJECT_SPEC.md](PROJECT_SPEC.md) and [AGENTS.md](AGENTS.md) remain the product and engineering guidance. Rules and statistical caveats are documented in [docs/DATA.md](docs/DATA.md) and in the site's Methodology dialog. No affiliation with DraftKings or the NFL is implied.
@@ -81,3 +84,5 @@ The authoritative [PROJECT_SPEC.md](PROJECT_SPEC.md) and [AGENTS.md](AGENTS.md) 
 The implementation review and remaining data/deployment prerequisites are recorded in [docs/SPEC_REVIEW.md](docs/SPEC_REVIEW.md).
 
 The sanitized package handoff is preserved in [IMPORT_NOTES.md](IMPORT_NOTES.md). Original workbooks were used only for private verification; source-cell aliases are documented in the import report.
+
+For repeatable selection imports, use `python3 scripts/import-dna.py /path/to/sanitized-dna.zip` with the package outside the checkout, then run data validation and all checks. The importer refuses to replace unrelated existing lineup work. Its selection contract and formulas are in [docs/DATA.md](docs/DATA.md); the supplied handoff is [docs/DNA_PACKAGE_README.md](docs/DNA_PACKAGE_README.md).

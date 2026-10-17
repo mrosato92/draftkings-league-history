@@ -339,73 +339,7 @@ export function records(seasons: Season[]): RecordEntry[] {
   }
   return entries;
 }
-export function playerOwnership(seasons: Season[], manager?: string) {
-  const lineups = seasons
-    .flatMap((s) => s.lineups)
-    .filter((l) => !manager || l.manager === manager);
-  const players = new Map<
-    string,
-    {
-      id: string;
-      name: string;
-      position: string;
-      selections: number;
-      salary: number;
-      ownership: number;
-    }
-  >();
-  for (const l of lineups)
-    for (const p of l.selections) {
-      const row = players.get(p.playerId) ?? {
-        id: p.playerId,
-        name: p.name,
-        position: p.position,
-        selections: 0,
-        salary: 0,
-        ownership: 0,
-      };
-      row.selections++;
-      row.salary += p.salary;
-      row.ownership = row.selections / lineups.length;
-      players.set(p.playerId, row);
-    }
-  return [...players.values()]
-    .map((p) => ({ ...p, salary: p.salary / p.selections }))
-    .sort(
-      (a, b) => b.selections - a.selections || a.name.localeCompare(b.name),
-    );
-}
-export function lineupStrategies(seasons: Season[], manager?: string) {
-  const lineups = seasons
-    .flatMap((s) => s.lineups)
-    .filter((l) => !manager || l.manager === manager);
-  if (!lineups.length) return null;
-  const stacks = lineups.filter((l) => {
-    const qb = l.selections.find((p) => p.slot === "QB");
-    return (
-      qb &&
-      l.selections.some(
-        (p) => ["WR", "TE"].includes(p.position) && p.team === qb.team,
-      )
-    );
-  }).length;
-  return {
-    count: lineups.length,
-    averageSalary:
-      lineups.reduce(
-        (sum, l) => sum + l.selections.reduce((n, p) => n + p.salary, 0),
-        0,
-      ) / lineups.length,
-    stackRate: stacks / lineups.length,
-    flex: ["RB", "WR", "TE"].map((position) => ({
-      position,
-      count: lineups.filter(
-        (l) =>
-          l.selections.find((p) => p.slot === "FLEX")?.position === position,
-      ).length,
-    })),
-  };
-}
+export { playerOwnership, lineupStrategies } from "./dna";
 export function scoringHistory(
   seasons: Season[],
   manager?: string,

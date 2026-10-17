@@ -54,3 +54,5 @@ Verified in this review: **20 unit tests and 16 production-browser tests passed*
 ## Historical import follow-up
 
 The missing-source/data findings above describe the initial review. The user subsequently supplied sanitized 2019–2025 JSON and all seven private workbooks. The historical results have now been imported and individually reconciled against their source schedule rows and season standings; see [HISTORY_IMPORT_REPORT.md](HISTORY_IMPORT_REPORT.md). The earlier pending-data and unverified-identity limitations are resolved. Player-selection extraction and external Vercel deployment verification remain separate from this score import.
+
+The subsequent [DNA import](DNA_IMPORT_REPORT.md) resolves most missing-selection coverage: 1,574 of 1,648 lineups are now imported, while the 74 absent lineups and unavailable salary/team/player-ID enrichment remain explicit. Official scoring and outcome objects are unchanged.

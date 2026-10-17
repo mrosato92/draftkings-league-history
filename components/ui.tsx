@@ -130,14 +130,19 @@ export function DataTable<T>({
   initialSort,
   rowKey,
   emptyText,
+  emptyDescription,
+  pageSize,
 }: {
   rows: T[];
   columns: Column<T>[];
   initialSort?: string;
   rowKey: (row: T) => string;
   emptyText?: string;
+  emptyDescription?: string;
+  pageSize?: number;
 }) {
   const [sort, setSort] = useState({ key: initialSort ?? "", desc: true });
+  const [page, setPage] = useState(0);
   const col = columns.find((c) => c.key === sort.key);
   const sorted = col
     ? [...rows].sort((a, b) => {
@@ -152,67 +157,107 @@ export function DataTable<T>({
         );
       })
     : rows;
+  const activePage = pageSize
+    ? Math.min(page, Math.max(0, Math.ceil(sorted.length / pageSize) - 1))
+    : 0;
+  const visible = pageSize
+    ? sorted.slice(activePage * pageSize, (activePage + 1) * pageSize)
+    : sorted;
   return (
-    <div className="table-scroll">
-      <table>
-        <thead>
-          <tr>
-            {columns.map((c) => (
-              <th
-                key={c.key}
-                className={c.numeric ? "numeric" : ""}
-                aria-sort={
-                  sort.key === c.key
-                    ? sort.desc
-                      ? "descending"
-                      : "ascending"
-                    : "none"
-                }
-              >
-                <button
-                  title={c.description}
-                  onClick={() =>
-                    setSort({
-                      key: c.key,
-                      desc: sort.key === c.key ? !sort.desc : !!c.numeric,
-                    })
+    <>
+      <div className="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              {columns.map((c) => (
+                <th
+                  key={c.key}
+                  className={c.numeric ? "numeric" : ""}
+                  aria-sort={
+                    sort.key === c.key
+                      ? sort.desc
+                        ? "descending"
+                        : "ascending"
+                      : "none"
                   }
                 >
-                  {c.label}
-                  {sort.key === c.key ? (
-                    sort.desc ? (
-                      <ArrowDown size={11} />
+                  <button
+                    title={c.description}
+                    onClick={() => {
+                      setPage(0);
+                      setSort({
+                        key: c.key,
+                        desc: sort.key === c.key ? !sort.desc : !!c.numeric,
+                      });
+                    }}
+                  >
+                    {c.label}
+                    {sort.key === c.key ? (
+                      sort.desc ? (
+                        <ArrowDown size={11} />
+                      ) : (
+                        <ArrowUp size={11} />
+                      )
                     ) : (
-                      <ArrowUp size={11} />
-                    )
-                  ) : (
-                    <ArrowUpDown size={11} />
-                  )}
-                </button>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {sorted.map((row, i) => (
-            <tr key={rowKey(row)}>
-              {columns.map((c) => (
-                <td key={c.key} className={c.numeric ? "numeric" : ""}>
-                  {c.render ? c.render(row, i) : (c.value(row) ?? "—")}
-                </td>
+                      <ArrowUpDown size={11} />
+                    )}
+                  </button>
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-      {!rows.length && (
-        <EmptyState
-          compact
-          title={emptyText ?? "The leaderboard is an open field."}
-          text="Rankings appear here once official regular-season results are imported."
-        />
+          </thead>
+          <tbody>
+            {visible.map((row, i) => (
+              <tr key={rowKey(row)}>
+                {columns.map((c) => (
+                  <td key={c.key} className={c.numeric ? "numeric" : ""}>
+                    {c.render
+                      ? c.render(row, i + activePage * (pageSize ?? 0))
+                      : (c.value(row) ?? "—")}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {!rows.length && (
+          <EmptyState
+            compact
+            title={emptyText ?? "The leaderboard is an open field."}
+            text={
+              emptyDescription ??
+              "Rankings appear here once official regular-season results are imported."
+            }
+          />
+        )}
+      </div>
+      {pageSize && sorted.length > pageSize && (
+        <div className="panel-bottom">
+          <span>
+            Showing {activePage * pageSize + 1}–
+            {Math.min(sorted.length, (activePage + 1) * pageSize)} of{" "}
+            {sorted.length}
+          </span>
+          <div className="pagination">
+            <button
+              disabled={activePage === 0}
+              onClick={() => setPage(activePage - 1)}
+            >
+              Previous page
+            </button>
+            <span>
+              {activePage + 1} / {Math.ceil(sorted.length / pageSize)}
+            </span>
+            <button
+              disabled={(activePage + 1) * pageSize >= sorted.length}
+              onClick={() => setPage(activePage + 1)}
+            >
+              Next page
+            </button>
+          </div>
+        </div>
       )}
-    </div>
+    </>
   );
 }
 export function ManagerName({ username }: { username: string }) {

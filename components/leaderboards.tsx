@@ -200,7 +200,8 @@ export function ObservedSelections({
     >
       <DataTable
         rows={playerOwnership(seasons, manager)}
-        rowKey={(r) => r.id}
+        rowKey={(r) => r.key}
+        pageSize={15}
         initialSort="selections"
         columns={[
           { key: "name", label: "PLAYER", value: (r) => r.name },
@@ -222,7 +223,8 @@ export function ObservedSelections({
             key: "salary",
             label: "AVG SALARY",
             value: (r) => r.salary,
-            render: (r) => `$${fmt(r.salary, 0)}`,
+            render: (r) =>
+              r.salary == null ? "Unavailable" : `$${fmt(r.salary, 0)}`,
             numeric: true,
           },
         ]}

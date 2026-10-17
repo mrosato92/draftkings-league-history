@@ -1,0 +1,44 @@
+[
+  {
+    "year": 2019,
+    "sourceLineupsVerified": 205,
+    "sourceSelectionsVerified": 1845,
+    "maxExportScoreDelta": 1.0000000003174137e-05
+  },
+  {
+    "year": 2020,
+    "sourceLineupsVerified": 207,
+    "sourceSelectionsVerified": 1863,
+    "maxExportScoreDelta": 2.0000000006348273e-05
+  },
+  {
+    "year": 2021,
+    "sourceLineupsVerified": 235,
+    "sourceSelectionsVerified": 2115,
+    "maxExportScoreDelta": 3.000000000952241e-05
+  },
+  {
+    "year": 2022,
+    "sourceLineupsVerified": 236,
+    "sourceSelectionsVerified": 2124,
+    "maxExportScoreDelta": 1.9999999977926564e-05
+  },
+  {
+    "year": 2023,
+    "sourceLineupsVerified": 235,
+    "sourceSelectionsVerified": 2115,
+    "maxExportScoreDelta": 2.0000000006348273e-05
+  },
+  {
+    "year": 2024,
+    "sourceLineupsVerified": 238,
+    "sourceSelectionsVerified": 2142,
+    "maxExportScoreDelta": 2.0000000006348273e-05
+  },
+  {
+    "year": 2025,
+    "sourceLineupsVerified": 218,
+    "sourceSelectionsVerified": 1962,
+    "maxExportScoreDelta": 3.000000000952241e-05
+  }
+]

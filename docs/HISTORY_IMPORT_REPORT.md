@@ -58,3 +58,7 @@ Pushing the completed commit to `main` supplies the historical data to the confi
 ## Validation result
 
 All required checks passed: data validation, **36 unit/data tests**, **23 production-browser tests**, lint, type checking, and production build. The build generated 863 pages overall, including all 26 manager routes and all 824 matchup routes. Raw spreadsheets and private contact/source material were excluded from the commit.
+
+## DNA follow-up
+
+The zero-lineup boundary above records the initial score import. A subsequent sanitized selection package adds 1,574 reconciled lineups without changing any official score/result object. See [DNA_IMPORT_REPORT.md](DNA_IMPORT_REPORT.md) for the new coverage, 44 unresolved FLEX positions, and unavailable enrichment fields. The original score-import audit and source receipts remain valid.

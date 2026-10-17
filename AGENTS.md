@@ -7,6 +7,8 @@ Read `PROJECT_SPEC.md` before any change. It is the product and data contract. T
 - Username is the only manager identity. Never publish first/last names, emails, phone numbers, original contact rosters, credentials, or unredacted workbooks.
 - Zero is an official score representing missed submission and an **automatic loss**; even 0–0 means both officially lose. Do not infer official W/L by comparing points alone.
 - Preserve official weekly scores even when player-selection exports are absent.
+- Verified nine-selection lineups may omit player IDs, salaries, NFL teams and player points. Preserve unknown FLEX positions as null; never fill them from general football knowledge. Salary/stack metrics require explicitly available enrichment.
+- Without stable player IDs, DNA groups exact source-name labels with identity caveats. RB1/WR1 suffixes encode encounter order, not priority. Keep coverage denominators and paired-week overlap samples explicit.
 - Include zeros by default in official/all-play/expected wins; add explicit zero exclusion controls only where analytically appropriate.
 - Exclude all playoff and championship information until verified separately.
 - Preserve data provenance and disclose denominators, sample sizes, missing lineup coverage and ranking qualification thresholds.

@@ -1,6 +1,6 @@
 # Public data contract and import guide
 
-The 2019–2025 historical results are imported: 824 matchups, 1,648 manager-week scores, 26 public usernames, and 12 missed submissions. All seven seasons are complete and reconciled against the supplied private workbooks. Detailed player selections are not yet imported. See [HISTORY_IMPORT_REPORT.md](HISTORY_IMPORT_REPORT.md) for source reconciliation, rounding, and coverage. The contract below also governs future corrections and lineup imports.
+The 2019–2025 historical results are imported: 824 matchups, 1,648 manager-week scores, 26 public usernames, and 12 missed submissions. All seven seasons are complete and reconciled against the supplied private workbooks. There are now 1,574 imported nine-selection lineups (95.51% of official manager-weeks), with 44 unresolved FLEX positions and no supplied salary, team, stable player-ID, or per-player-point enrichment. See [HISTORY_IMPORT_REPORT.md](HISTORY_IMPORT_REPORT.md) for source reconciliation, rounding, and coverage. The contract below also governs future corrections and lineup imports.
 
 ## Files
 
@@ -38,7 +38,7 @@ Each member appears at most once per week. Duplicate IDs, self-matchups, unknown
 
 ## Sanitized provenance
 
-A matchup or lineup may include `provenance` with `sourceId`, `sheet`, and `cells`. `sourceId` is a neutral opaque public ID (letters, digits, underscores, hyphens), not an original private filename, path, URL, or person's name. Preserve its mapping to the original workbook privately. `sheet` is `Schedule/Results`, `Standings`, or `Week N`. `cells` is a nonempty array of spreadsheet cell/range references. These references appear in matchup drill-downs when provided, but original documents are never linked or bundled. Add provenance during extraction when the source permits it; a missing source reference is disclosed as unavailable, never fabricated.
+A matchup or lineup may include `provenance` with `sourceId`, `sheet`, and `cells`. `sourceId` is a neutral opaque public ID (letters, digits, underscores, hyphens), not an original private filename, path, URL, or person's name. Preserve its mapping to the original workbook privately. `sheet` is `Schedule/Results`, `Standings`, `Week N`, or `Results_WN`. `cells` is a nonempty array of spreadsheet cell/range references. These references appear in matchup drill-downs when provided, but original documents are never linked or bundled. Add provenance during extraction when the source permits it; a missing source reference is disclosed as unavailable, never fabricated.
 
 ## Optional lineup details
 
@@ -46,17 +46,17 @@ Each lineup contains `week`, `manager`, and exactly nine `selections`. It must r
 
 Each selection has:
 
-| Field      | Meaning                                                                                                            |
-| ---------- | ------------------------------------------------------------------------------------------------------------------ |
-| `playerId` | Stable public NFL player identifier, consistent across seasons; defense/special teams use a stable team-defense ID |
-| `name`     | Public NFL player/team-defense name                                                                                |
-| `team`     | NFL team abbreviation from that week                                                                               |
-| `position` | `QB`, `RB`, `WR`, `TE`, or `DST`                                                                                   |
-| `slot`     | One each of `QB`, `RB1`, `RB2`, `WR1`, `WR2`, `WR3`, `TE`, `FLEX`, `DST`                                           |
-| `salary`   | Official nonnegative integer DraftKings salary for the shared slate                                                |
-| `points`   | Optional finite official player score; omit if unavailable (negative deductions allowed)                           |
+| Field      | Meaning                                                                                                             |
+| ---------- | ------------------------------------------------------------------------------------------------------------------- |
+| `playerId` | Optional, nullable verified public player ID. Omit when absent; never fabricate slugs or infer identity from names. |
+| `name`     | Public NFL player/team-defense name                                                                                 |
+| `team`     | Optional, nullable verified NFL team abbreviation from that week; unavailable in this import.                       |
+| `position` | `QB`, `RB`, `WR`, `TE`, `DST`, or null (null is permitted only in FLEX)                                             |
+| `slot`     | One each of `QB`, `RB1`, `RB2`, `WR1`, `WR2`, `WR3`, `TE`, `FLEX`, `DST`                                            |
+| `salary`   | Optional, nullable official nonnegative integer DraftKings salary; unavailable in this import.                      |
+| `points`   | Optional finite official player score; omit if unavailable (negative deductions allowed)                            |
 
-FLEX allows RB, WR, or TE. All other slots must match their positions. Players and slots cannot repeat in a lineup; total salary cannot exceed $50,000. Do not invent selections or salaries to fill an incomplete lineup. Leave that lineup absent; preserve its official matchup score.
+FLEX allows RB, WR, TE, or an explicitly unknown (null) position. A verified nine-selection lineup with unknown FLEX position remains a complete selection observation; it is not a missing lineup. All other slots require their matching known positions. RB1/RB2 and WR1/WR2/WR3 are encounter-order storage labels, not priorities or salary ranks. Slots and observed player keys cannot repeat. Known salary subtotals above $50,000 fail validation; missing salaries do not imply zero or prove that a complete cap total is available. Do not invent picks, player IDs, salaries, teams, positions, or player points. If fewer than nine selections are known, leave the lineup absent and preserve its official score.
 
 Official weekly scores are authoritative. Player points are optional; the app does not reconstruct official scores by summing partial player data or assume an undocumented correction policy. If source totals disagree, reconcile them privately before import.
 
@@ -75,9 +75,14 @@ Official weekly scores are authoritative. Player points are optional; the app do
 - **Schedule strength:** average actual opponent score across the same complete weeks used for luck; zeros included.
 - **Scoring records:** highest score; closest winning margin; largest winning margin; highest score in a loss; lowest score in a win; lowest official score (zeros included); lowest nonzero submitted score. Only complete, explicitly source-reconciled seasons qualify for published record holders and awards; the UI discloses that limited scope. All tied holders are retained. The basement explicitly excludes missed submissions. Other official record candidates include zero weeks where eligible. Winning, losing, and missed-submission streaks reset at each season boundary, unknown week, or nonmatching result, and link to the final matchup in the record run.
 - **Fame/Shame:** the same reproducible record calculations, plus the missed-submission count. These are record achievements, not invented championship or playoff honors.
-- **Selection rate:** appearances / detailed lineups in the selected scope. Never inferred contest-wide ownership. Missing lineups are excluded; the coverage percentage reveals the sample size.
-- **QB stack:** lineup with its QB and at least one same-team WR or TE. Does not assume that a same-team RB is a pass catcher.
-- **Average salary/FLEX:** calculated from imported complete lineups only.
+- **Selection rate:** appearances / observed nine-selection lineups in the selected manager/year/week scope. Position and roster-slot search filters restrict eligible observations, not this lineup denominator. Never inferred contest-wide ownership. Missing lineups are excluded from selection rates but retained in the official-score coverage denominator.
+- **Selection identity:** use verified player IDs if actually supplied; otherwise group exact raw names. Internal grouping keys are not NFL player IDs. Names may conflate different same-name players; spelling/suffix variants remain separate without an authoritative identity mapping. No cross-season name normalization is inferred.
+- **Repeat picks:** sum each manager’s appearances for a label after their first occurrence in the selected scope: `Σ max(count(manager, label) − 1, 0)`. These are repeat appearances, not necessarily consecutive weeks.
+- **Positional trends:** position count / (nine × observed lineups), with unknown FLEX positions included as their own category. Per-lineup counts and sample sizes are also shown. FLEX shares use one FLEX per observed lineup; unknowns remain in that denominator.
+- **Lineup overlap:** compare two observed lineups only in the same year and week, whether or not their managers were direct opponents. Shared share = common selection keys / 9. Jaccard = common keys / (18 − common keys). Average overlap uses only paired observed weeks; missing pairs are unknown, never zero overlap. Both managers’ coverage and common official weeks are disclosed. Slot order does not affect these sets. Comparison favorites use each manager’s own observed denominator, including their weeks where the other manager’s lineup is missing.
+- **Coverage:** observed nine-selection lineups / official manager-week scores. All official zero-score missed submissions remain in this denominator. Coverage tables group by season, manager, or manager-season and respect manager/year/week scope. Unknown FLEX positions do not remove verified player selections.
+- **QB stack:** available only for lineups with verified NFL-team and known position data for every selection. A stack requires the QB and at least one same-team WR/TE. Missing team or position data is unavailable, never a 0% stacking rate. No raw team field exists in this package, so the current metric is disabled.
+- **Average salary:** available only for lineups with all nine verified salaries. Display the number of qualifying enriched lineups. With no salaries supplied, this is unavailable, never $0. FLEX position analysis remains available independently.
 
 ## Private-to-public import workflow
 
@@ -95,3 +100,7 @@ If the official league uses a nonzero tie-resolution policy, request a separate 
 ## Annual release
 
 After the next supported season is completed, review the product's coverage window before adding a new year; the current contract intentionally stops at 2025. For an update inside the supported years: back up private source material outside Git, sanitize imports, reconcile official score/outcome totals and observed lineup coverage, run all required checks, review a protected Vercel preview against the private source, and merge only sanitized data. Verify the production season, one known matchup, and coverage/status labels after deployment. Preserve a Git commit reference for rollback. No live DraftKings API synchronization is assumed.
+
+## DNA package import
+
+See [DNA_IMPORT_REPORT.md](DNA_IMPORT_REPORT.md) and the preserved [DNA_PACKAGE_README.md](DNA_PACKAGE_README.md). `scripts/import-dna.py` imports only sanitized source selections, maps casing-only manager variants to their unique existing usernames, matches every supplied lineup score exactly to the unchanged official score, preserves null positions, converts source rows to actual `F`-column lineup cell references, and records canonical integrity hashes. `tests/fixtures/dna-import-manifest.json` locks the official-data projection independently of newly added lineups. Source originals and contact information remain outside Git.

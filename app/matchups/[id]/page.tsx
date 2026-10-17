@@ -1,3 +1,4 @@
+import { dashboardData } from "@/lib/dashboard-data";
 import { notFound } from "next/navigation";
 import Dashboard from "@/components/dashboard";
 import { loadLeague } from "@/lib/data";
@@ -17,5 +18,11 @@ export default async function MatchupPage({
   const { id } = await params;
   const league = loadLeague();
   if (!matchupById(league, id)) notFound();
-  return <Dashboard league={league} section="seasons" matchId={id} />;
+  return (
+    <Dashboard
+      {...dashboardData(league, { section: "seasons", matchId: id })}
+      section="seasons"
+      matchId={id}
+    />
+  );
 }

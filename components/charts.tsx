@@ -6,6 +6,7 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  Legend,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -134,6 +135,71 @@ export function LuckChart({
               />
             ))}
           </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+export function DnaFlexChart({
+  data,
+}: {
+  data: {
+    year: number;
+    RB: number;
+    WR: number;
+    TE: number;
+    Unknown: number;
+    lineups: number;
+  }[];
+}) {
+  if (!data.length)
+    return (
+      <ScoringChart
+        data={[]}
+        title="No observed FLEX selections in this scope."
+      />
+    );
+  return (
+    <div
+      className="chart-wrap"
+      role="img"
+      aria-label="FLEX position shares by season, including unknown positions. Exact counts are in the position table."
+    >
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          data={data}
+          margin={{ top: 10, right: 12, left: -15, bottom: 10 }}
+        >
+          <CartesianGrid vertical={false} stroke="#2a2f2a" />
+          <XAxis dataKey="year" tick={{ fill: "#8e998f", fontSize: 10 }} />
+          <YAxis
+            domain={[0, 100]}
+            tickFormatter={(v) => `${v}%`}
+            tick={{ fill: "#8e998f", fontSize: 10 }}
+          />
+          <Tooltip
+            contentStyle={tooltip}
+            formatter={(v, name, item) => [
+              `${Number(v).toFixed(1)}% (n=${item.payload.lineups} lineups)`,
+              name,
+            ]}
+          />
+          <Legend wrapperStyle={{ fontSize: 10 }} />
+          {[
+            { key: "RB", color: "#ed8553" },
+            { key: "WR", color: "#bacd9c" },
+            { key: "TE", color: "#86aaa7" },
+            { key: "Unknown", color: "#92938d" },
+          ].map((p) => (
+            <Bar
+              key={p.key}
+              dataKey={p.key}
+              stackId="position"
+              fill={p.color}
+              isAnimationActive={false}
+            />
+          ))}
         </BarChart>
       </ResponsiveContainer>
     </div>

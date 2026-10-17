@@ -1,0 +1,409 @@
+{
+  "packageSha256": "339bdc53d4461d1c78d6f4bf0d9c2d319527c04a72e30fd14fbaf92b74038326",
+  "officialProjection": {
+    "2019": "edaa4ac968ef88baffb47e7dcf62836c669ff11c01cb5ae104c883202c4799e4",
+    "2020": "1ecdd233a3f919c9d13187c268176e5bd885b0e87ffe2b5a8b2434b711260ae3",
+    "2021": "5e715d008ed7475fcdaa1247a667c405daba79740d206be1f4b64f43821f0ee7",
+    "2022": "da2a2a845b1cc2b164e79fbc223b450f64c90a13b511acdf414a930848b9eb89",
+    "2023": "9fbbcbe4801bf95351b39a14c5e28248b9a35c0499a19f4d56b1bf7f47e0681e",
+    "2024": "985eb78492e9d81eeaf0f8528960660e29e4a6a46f03ece8ab629dc0ca95eef3",
+    "2025": "9e86a6debbd05cf9f53a48e150b759e6591498657fe08c0ed562f459ccbadcc3"
+  },
+  "byYear": {
+    "2019": {
+      "lineups": 205,
+      "officialScores": 224,
+      "unknownFlex": 15,
+      "selections": 1845,
+      "lineupsSha256": "7cfc318caea92966f9a7603be3b5273ce240cbf55e7f2255a5c40fc9a65dbdd9"
+    },
+    "2020": {
+      "lineups": 207,
+      "officialScores": 224,
+      "unknownFlex": 8,
+      "selections": 1863,
+      "lineupsSha256": "65d5f9033a03b295be1e88f4fb80a4598261d1cc2754400536c10a9b9a7a8443"
+    },
+    "2021": {
+      "lineups": 235,
+      "officialScores": 240,
+      "unknownFlex": 8,
+      "selections": 2115,
+      "lineupsSha256": "546c55a30ac450d9e67f79beaa914730090060aa253dcdc1b2ceba5c1ca1ce2b"
+    },
+    "2022": {
+      "lineups": 236,
+      "officialScores": 240,
+      "unknownFlex": 2,
+      "selections": 2124,
+      "lineupsSha256": "15b2c4d2d6cff4142010e462f56265fa61ca9ddf12eba1b3fc1a8633ecc4e0b1"
+    },
+    "2023": {
+      "lineups": 235,
+      "officialScores": 240,
+      "unknownFlex": 5,
+      "selections": 2115,
+      "lineupsSha256": "c6da209578ff07cd69b9328c70169741c1858dc02fab7dc65e82821570a9ca39"
+    },
+    "2024": {
+      "lineups": 238,
+      "officialScores": 240,
+      "unknownFlex": 6,
+      "selections": 2142,
+      "lineupsSha256": "e9190f5de8c53822bce8b2ae0a5551c9f631ed4d1e464b9065de6c3ac7a39718"
+    },
+    "2025": {
+      "lineups": 218,
+      "officialScores": 240,
+      "unknownFlex": 0,
+      "selections": 1962,
+      "lineupsSha256": "96994fff804c19d0c893938c01f8665fa723f76d3a06ccd602da2f671eccea25"
+    }
+  },
+  "usernameCasingMappings": [
+    {
+      "source": "cmack2023",
+      "canonical": "Cmack2023",
+      "lineups": 56
+    },
+    {
+      "source": "dlegz123",
+      "canonical": "Dlegz123",
+      "lineups": 73
+    }
+  ],
+  "unknownPositions": [
+    {
+      "year": 2019,
+      "week": 3,
+      "manager": "mrosato92",
+      "name": "Rex Burkhead",
+      "observedPositions": []
+    },
+    {
+      "year": 2019,
+      "week": 3,
+      "manager": "jpalladino91",
+      "name": "Ito Smith",
+      "observedPositions": []
+    },
+    {
+      "year": 2019,
+      "week": 4,
+      "manager": "mrosato92",
+      "name": "Chris Thompson",
+      "observedPositions": []
+    },
+    {
+      "year": 2019,
+      "week": 5,
+      "manager": "tkerensky",
+      "name": "Jordan Howard",
+      "observedPositions": []
+    },
+    {
+      "year": 2019,
+      "week": 5,
+      "manager": "jkeenan4",
+      "name": "KeeSean Johnson",
+      "observedPositions": []
+    },
+    {
+      "year": 2019,
+      "week": 5,
+      "manager": "missmoneystacks",
+      "name": "Chris Thompson",
+      "observedPositions": []
+    },
+    {
+      "year": 2019,
+      "week": 6,
+      "manager": "G.Logan319",
+      "name": "C.J. Prosise",
+      "observedPositions": []
+    },
+    {
+      "year": 2019,
+      "week": 8,
+      "manager": "OldMoneyStacks",
+      "name": "Adam Shaheen",
+      "observedPositions": []
+    },
+    {
+      "year": 2019,
+      "week": 8,
+      "manager": "3liManning",
+      "name": "Trevor Davis",
+      "observedPositions": []
+    },
+    {
+      "year": 2019,
+      "week": 9,
+      "manager": "kjrosato",
+      "name": "Royce Freeman",
+      "observedPositions": []
+    },
+    {
+      "year": 2019,
+      "week": 10,
+      "manager": "3liManning",
+      "name": "Tarik Cohen",
+      "observedPositions": []
+    },
+    {
+      "year": 2019,
+      "week": 11,
+      "manager": "3liManning",
+      "name": "Blake Jarwin",
+      "observedPositions": []
+    },
+    {
+      "year": 2019,
+      "week": 13,
+      "manager": "missmoneystacks",
+      "name": "Jay Ajayi",
+      "observedPositions": []
+    },
+    {
+      "year": 2019,
+      "week": 14,
+      "manager": "notrheelyhere",
+      "name": "Patrick Laird",
+      "observedPositions": []
+    },
+    {
+      "year": 2019,
+      "week": 14,
+      "manager": "tkerensky",
+      "name": "Duke Johnson",
+      "observedPositions": []
+    },
+    {
+      "year": 2020,
+      "week": 1,
+      "manager": "brettalexander23",
+      "name": "Rex Burkhead",
+      "observedPositions": []
+    },
+    {
+      "year": 2020,
+      "week": 1,
+      "manager": "notrheelyhere",
+      "name": "Chris Thompson",
+      "observedPositions": []
+    },
+    {
+      "year": 2020,
+      "week": 4,
+      "manager": "OldMoneyStacks",
+      "name": "KhaDarel Hodge",
+      "observedPositions": []
+    },
+    {
+      "year": 2020,
+      "week": 5,
+      "manager": "brettalexander23",
+      "name": "Jeff Smith",
+      "observedPositions": []
+    },
+    {
+      "year": 2020,
+      "week": 6,
+      "manager": "missmoneystacks",
+      "name": "Nick Boyle",
+      "observedPositions": []
+    },
+    {
+      "year": 2020,
+      "week": 9,
+      "manager": "Guardshark",
+      "name": "La'Mical Perine",
+      "observedPositions": []
+    },
+    {
+      "year": 2020,
+      "week": 11,
+      "manager": "molone96",
+      "name": "La'Mical Perine",
+      "observedPositions": []
+    },
+    {
+      "year": 2020,
+      "week": 14,
+      "manager": "brettalexander23",
+      "name": "Duke Johnson",
+      "observedPositions": []
+    },
+    {
+      "year": 2021,
+      "week": 3,
+      "manager": "kjrosato",
+      "name": "Cordarrelle Patterson",
+      "observedPositions": [
+        "RB",
+        "WR"
+      ]
+    },
+    {
+      "year": 2021,
+      "week": 3,
+      "manager": "Zacharylichtman",
+      "name": "Cordarrelle Patterson",
+      "observedPositions": [
+        "RB",
+        "WR"
+      ]
+    },
+    {
+      "year": 2021,
+      "week": 7,
+      "manager": "Zacharylichtman",
+      "name": "Cordarrelle Patterson",
+      "observedPositions": [
+        "RB",
+        "WR"
+      ]
+    },
+    {
+      "year": 2021,
+      "week": 8,
+      "manager": "Dlegz123",
+      "name": "Cordarrelle Patterson",
+      "observedPositions": [
+        "RB",
+        "WR"
+      ]
+    },
+    {
+      "year": 2021,
+      "week": 9,
+      "manager": "mrosato92",
+      "name": "Tajae Sharpe",
+      "observedPositions": []
+    },
+    {
+      "year": 2021,
+      "week": 10,
+      "manager": "Zacharylichtman",
+      "name": "Jordan Howard",
+      "observedPositions": []
+    },
+    {
+      "year": 2021,
+      "week": 14,
+      "manager": "Zacharylichtman",
+      "name": "Cordarrelle Patterson",
+      "observedPositions": [
+        "RB",
+        "WR"
+      ]
+    },
+    {
+      "year": 2021,
+      "week": 14,
+      "manager": "Dlegz123",
+      "name": "Rex Burkhead",
+      "observedPositions": []
+    },
+    {
+      "year": 2022,
+      "week": 2,
+      "manager": "mmayeski",
+      "name": "Anthony Schwartz",
+      "observedPositions": []
+    },
+    {
+      "year": 2022,
+      "week": 9,
+      "manager": "mmayeski",
+      "name": "Caleb Huntley",
+      "observedPositions": []
+    },
+    {
+      "year": 2023,
+      "week": 5,
+      "manager": "Cmack2023",
+      "name": "Jaleel McLaughlin",
+      "observedPositions": []
+    },
+    {
+      "year": 2023,
+      "week": 5,
+      "manager": "3liManning",
+      "name": "Ronnie Bell",
+      "observedPositions": []
+    },
+    {
+      "year": 2023,
+      "week": 7,
+      "manager": "mmayeski",
+      "name": "Zach Evans",
+      "observedPositions": []
+    },
+    {
+      "year": 2023,
+      "week": 9,
+      "manager": "3liManning",
+      "name": "Taysom Hill",
+      "observedPositions": [
+        "QB",
+        "TE"
+      ]
+    },
+    {
+      "year": 2023,
+      "week": 10,
+      "manager": "kjrosato",
+      "name": "Trenton Irwin",
+      "observedPositions": []
+    },
+    {
+      "year": 2024,
+      "week": 5,
+      "manager": "mmayeski",
+      "name": "Elijah Higgins",
+      "observedPositions": []
+    },
+    {
+      "year": 2024,
+      "week": 9,
+      "manager": "mmayeski",
+      "name": "Jaleel McLaughlin",
+      "observedPositions": []
+    },
+    {
+      "year": 2024,
+      "week": 10,
+      "manager": "molone96",
+      "name": "Taysom Hill",
+      "observedPositions": [
+        "QB",
+        "TE"
+      ]
+    },
+    {
+      "year": 2024,
+      "week": 12,
+      "manager": "mrosato92",
+      "name": "Ameer Abdullah",
+      "observedPositions": []
+    },
+    {
+      "year": 2024,
+      "week": 13,
+      "manager": "molone96",
+      "name": "Taysom Hill",
+      "observedPositions": [
+        "QB",
+        "TE"
+      ]
+    },
+    {
+      "year": 2024,
+      "week": 13,
+      "manager": "ljhaddock",
+      "name": "Ray Davis",
+      "observedPositions": []
+    }
+  ]
+}

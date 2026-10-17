@@ -1,3 +1,4 @@
+import { dashboardData } from "@/lib/dashboard-data";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Dashboard from "@/components/dashboard";
@@ -23,5 +24,10 @@ export default async function Section({
   const { section } = await params;
   const nav = sections.find((s) => s.id === section);
   if (!nav) notFound();
-  return <Dashboard league={loadLeague()} section={nav.id} />;
+  return (
+    <Dashboard
+      {...dashboardData(loadLeague(), { section: nav.id })}
+      section={nav.id}
+    />
+  );
 }

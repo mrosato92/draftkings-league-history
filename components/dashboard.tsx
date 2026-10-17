@@ -39,11 +39,9 @@ import { YEARS } from "@/lib/schema";
 import {
   completeWeeks,
   games,
-  lineupStrategies,
   longestStreak,
   luckTable,
   matchupById,
-  playerOwnership,
   records,
   rivalry,
   scoringHistory,
@@ -66,6 +64,8 @@ import {
   type Column,
 } from "./ui";
 import { LuckChart, ScoringChart } from "./charts";
+import DNA from "./dna";
+import { useHydrated } from "./use-hydrated";
 import { Leaderboards, ObservedSelections } from "./leaderboards";
 const icons: Record<string, LucideIcon> = {
   home: Grid2X2,
@@ -192,12 +192,15 @@ export default function Dashboard({
   section,
   username,
   matchId,
+  lineupCounts,
 }: {
   league: League;
   section: SectionId;
   username?: string;
   matchId?: string;
+  lineupCounts?: Record<number, number>;
 }) {
+  const hydrated = useHydrated();
   const year = useSyncExternalStore(
     subscribeSeason,
     seasonSnapshot,
@@ -373,6 +376,7 @@ export default function Dashboard({
                 <span className="sr-only">Season filter</span>
                 <select
                   aria-label="Season filter"
+                  disabled={!hydrated}
                   value={year}
                   onChange={(e) => setYear(e.target.value)}
                 >
@@ -453,6 +457,7 @@ export default function Dashboard({
               excludeZeros={excludeZeros}
               setExcludeZeros={setExcludeZeros}
               matchId={matchId}
+              lineupCounts={lineupCounts}
             />
           )}
           {section === "dna" && <DNA seasons={selected} />}
@@ -554,7 +559,8 @@ export default function Dashboard({
                 <div key={s.year}>
                   <strong>{s.year}</strong>
                   <span>
-                    {s.matchups.length} matchups · {s.lineups.length} lineups ·{" "}
+                    {s.matchups.length} matchups ·{" "}
+                    {lineupCounts?.[s.year] ?? s.lineups.length} lineups ·{" "}
                     {s.verification}
                   </span>
                   <span
@@ -1674,12 +1680,14 @@ function SeasonArchive({
   excludeZeros,
   setExcludeZeros,
   matchId,
+  lineupCounts,
 }: {
   seasons: Season[];
   league: League;
   excludeZeros: boolean;
   setExcludeZeros: (v: boolean) => void;
   matchId?: string;
+  lineupCounts?: Record<number, number>;
 }) {
   const [chosen, setChosen] = useState<number | null>(null);
   const [week, setWeek] = useState("all");
@@ -1745,7 +1753,7 @@ function SeasonArchive({
         />
         <Metric
           label="DETAILED LINEUPS"
-          value={current.lineups.length}
+          value={lineupCounts?.[current.year] ?? current.lineups.length}
           note="Missing selections never remove scores"
         />
       </div>
@@ -1912,10 +1920,18 @@ function MatchupDetail({
                     { key: "slot", label: "SLOT", value: (p) => p.slot },
                     { key: "name", label: "PLAYER", value: (p) => p.name },
                     {
+                      key: "position",
+                      label: "POS",
+                      value: (p) => p.position ?? "Unknown",
+                    },
+                    {
                       key: "salary",
                       label: "SALARY",
-                      value: (p) => p.salary,
-                      render: (p) => `$${fmt(p.salary, 0)}`,
+                      value: (p) => p.salary ?? null,
+                      render: (p) =>
+                        p.salary == null
+                          ? "Unavailable"
+                          : `$${fmt(p.salary, 0)}`,
                       numeric: true,
                     },
                     {
@@ -1939,163 +1955,6 @@ function MatchupDetail({
         })}
       </div>
     </Panel>
-  );
-}
-function DNA({ seasons }: { seasons: Season[] }) {
-  const [manager, setManager] = useState("all");
-  const [query, setQuery] = useState("");
-  const members = [...new Set(seasons.flatMap((s) => s.members))].sort();
-  const activeManager = members.includes(manager) ? manager : "all";
-  const selectedManager = activeManager === "all" ? undefined : activeManager;
-  const players = playerOwnership(seasons, selectedManager);
-  const strategy = lineupStrategies(seasons, selectedManager);
-  const scores = games(seasons).filter(
-    (g) => !selectedManager || g.manager === selectedManager,
-  ).length;
-  return (
-    <>
-      <div className="editorial-callout">
-        <Dna size={34} />
-        <div>
-          <span className="eyebrow">YOUR LINEUPS HAVE A TYPE</span>
-          <h2>Same salary cap. Very different instincts.</h2>
-          <p>
-            Favorite players, positional habits, and the stacking decisions
-            you’ll defend to the end. Built only from actual roster selections.
-          </p>
-        </div>
-      </div>
-      <div className="section-heading">
-        <div>
-          <h2>The lineup fingerprint.</h2>
-          <p className="muted">
-            Selection rates reflect imported league lineups, not DraftKings
-            contest ownership.
-          </p>
-        </div>
-        <label className="select-wrap">
-          <Users size={14} />
-          <select
-            aria-label="Filter lineup analytics by manager"
-            value={activeManager}
-            onChange={(e) => setManager(e.target.value)}
-          >
-            <option value="all">All managers</option>
-            {members.map((m) => (
-              <option key={m}>{m}</option>
-            ))}
-          </select>
-          <ChevronDown size={13} />
-        </label>
-      </div>
-      <div className="metrics-grid">
-        <Metric
-          label="VERIFIED LINEUPS"
-          value={strategy?.count ?? 0}
-          note={`${scores} official scores in selected scope`}
-        />
-        <Metric
-          label="LINEUP COVERAGE"
-          value={scores ? pct((strategy?.count ?? 0) / scores) : "—"}
-          note="Detailed lineups / official scores"
-        />
-        <Metric
-          label="AVERAGE SALARY USED"
-          value={strategy ? `$${fmt(strategy.averageSalary, 0)}` : "—"}
-          note="Of the $50,000 cap · known lineups"
-        />
-        <Metric
-          label="QB + PASS-CATCHER STACK"
-          value={strategy ? pct(strategy.stackRate) : "—"}
-          note="QB with ≥1 same-team WR or TE"
-        />
-      </div>
-      <Panel
-        title="The usual suspects"
-        eyebrow="PLAYER SELECTION TENDENCIES"
-        aside={<Dna size={20} />}
-      >
-        <div className="table-toolbar">
-          <label className="inline-search">
-            <Search size={15} />
-            <input
-              placeholder="Filter by NFL player…"
-              aria-label="Filter players"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </label>
-          <span className="toolbar-note">
-            Denominator: {strategy?.count ?? 0} imported lineups
-          </span>
-        </div>
-        <DataTable
-          rows={players.filter((p) =>
-            p.name.toLowerCase().includes(query.toLowerCase()),
-          )}
-          rowKey={(p) => p.id}
-          initialSort="selections"
-          columns={[
-            { key: "name", label: "PLAYER", value: (p) => p.name },
-            { key: "position", label: "POS", value: (p) => p.position },
-            {
-              key: "selections",
-              label: "SELECTIONS",
-              value: (p) => p.selections,
-              numeric: true,
-            },
-            {
-              key: "ownership",
-              label: "SELECTION RATE",
-              value: (p) => p.ownership,
-              render: (p) => pct(p.ownership),
-              numeric: true,
-            },
-            {
-              key: "salary",
-              label: "AVG SALARY",
-              value: (p) => p.salary,
-              render: (p) => `$${fmt(p.salary, 0)}`,
-              numeric: true,
-            },
-          ]}
-          emptyText="The lineup DNA hasn’t been sequenced."
-        />
-      </Panel>
-      <Panel
-        title="The FLEX philosophy"
-        eyebrow="ONE SLOT / THREE SCHOOLS OF THOUGHT"
-      >
-        {strategy ? (
-          <div className="flex-breakdown">
-            {strategy.flex.map((f) => (
-              <div key={f.position}>
-                <strong>{f.position}</strong>
-                <div className="progress-track">
-                  <span
-                    style={{ width: `${(f.count / strategy.count) * 100}%` }}
-                  />
-                </div>
-                <span>
-                  {pct(f.count / strategy.count)} · {f.count} lineups
-                </span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <EmptyState
-            compact
-            title="No selections. No armchair psychology."
-            text="Import detailed nine-player lineups to reveal FLEX usage and roster-building tendencies."
-          />
-        )}
-      </Panel>
-      <InfoNote>
-        Missing lineups are excluded from selection denominators. Their official
-        scores stay in standings and scoring statistics. Ownership here is
-        descriptive and subject to incomplete-data bias.
-      </InfoNote>
-    </>
   );
 }
 function Hall({ seasons }: { seasons: Season[] }) {

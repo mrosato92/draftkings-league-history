@@ -3172,3 +3172,78 @@ tbody tr:hover {
   padding: 6px 8px;
   font: 10px var(--font-mono);
 }
+
+.dna-controls,
+.dna-toolbar,
+.pagination,
+.receipt-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.dna-toolbar {
+  justify-content: flex-start;
+}
+.pagination button {
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 4px;
+  color: var(--text);
+  font-size: 9px;
+}
+.pagination button:hover:not(:disabled) {
+  border-color: var(--orange);
+}
+.pagination button:disabled {
+  opacity: 0.35;
+}
+.wrap-cell {
+  display: block;
+  white-space: normal;
+  max-width: 330px;
+  min-width: 160px;
+  line-height: 1.7;
+}
+.receipt-links {
+  min-width: 100px;
+}
+.dna-controls .select-wrap select {
+  max-width: 180px;
+}
+.pagination {
+  justify-content: flex-end;
+}
+@media (max-width: 760px) {
+  .section-heading:has(.dna-controls) {
+    flex-direction: column;
+  }
+  .dna-controls {
+    width: 100%;
+  }
+  .dna-controls .select-wrap {
+    max-width: 100%;
+  }
+  .dna-toolbar .inline-search {
+    max-width: 100%;
+    width: 100%;
+  }
+  .panel-header:has(.select-wrap) {
+    flex-wrap: wrap;
+  }
+  .pagination button {
+    padding: 6px;
+  }
+}
+
+.dna-content {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  min-inline-size: 0;
+  width: 100%;
+}
+.dna-content:disabled .select-wrap {
+  opacity: 0.65;
+}
