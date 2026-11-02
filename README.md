@@ -30,19 +30,20 @@ npm start               # production server; build first
 
 ## The site
 
-| Section          | Route                               | Historical analytics                                                      |
-| ---------------- | ----------------------------------- | ------------------------------------------------------------------------- |
-| League HQ        | `/`                                 | Career leaders, scoring trends, record spotlight                          |
-| Manager Profiles | `/managers`, `/managers/[username]` | Career records, season breakdowns, weekly history, statistical rankings   |
-| Leaderboards     | `/leaderboards`                     | Qualified wins, win %, points, scoring average, all-play %, expected wins |
-| Comparison Lab   | `/compare`                          | Side-by-side totals and rates with season and missed-week filters         |
-| Record Book      | `/records`                          | Score/margin records, tied record holders, matchup evidence               |
-| Rivalry Center   | `/rivalries`                        | Manager comparison, direct matchups, head-to-head records                 |
-| Luck Lab         | `/luck`                             | All-play records, expected wins, actual-minus-expected wins               |
-| Season Archives  | `/seasons`                          | Season standings, week filters, official results                          |
-| DraftKings DNA   | `/dna`                              | Player selection rates, salary usage, QB stacks, FLEX usage               |
-| Fame & Shame     | `/hall-of-fame`                     | Calculated achievements, lowlights, missed-submission register            |
-| Matchup receipts | `/matchups/[id]`                    | Both official scores and available player selections                      |
+| Section          | Route                               | Historical analytics                                                                                  |
+| ---------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| League HQ        | `/`                                 | Career leaders, scoring trends, record spotlight                                                      |
+| Manager Profiles | `/managers`, `/managers/[username]` | Career records, season breakdowns, weekly history, statistical rankings                               |
+| Leaderboards     | `/leaderboards`                     | Qualified wins, win %, points, scoring average, all-play %, expected wins                             |
+| Record Book      | `/records`                          | Score/margin records, tied record holders, matchup evidence                                           |
+| Rivalry Center   | `/rivalries`                        | Career/season totals and rates, missed-week average control, direct matchups and head-to-head records |
+| Weekly Winners   | `/weekly-winners`                   | All-time/season victories, rates, yearly breakdowns, shared wins, records and recap links             |
+| Weekly Recap     | `/weekly-recap`                     | Weekly headlines, standings movement, scoring ranks, matchup receipts and shared awards               |
+| Luck Lab         | `/luck`                             | All-play records, expected wins, actual-minus-expected wins                                           |
+| Season Archives  | `/seasons`                          | Season standings, week filters, official results                                                      |
+| DraftKings DNA   | `/dna`                              | Player selection rates, salary usage, QB stacks, FLEX usage                                           |
+| Fame & Shame     | `/hall-of-fame`                     | Calculated achievements, lowlights, missed-submission register                                        |
+| Matchup receipts | `/matchups/[id]`                    | Both official scores and available player selections                                                  |
 
 All sections have season filtering. Leaderboard participation thresholds are visible; scoring-average leaders default to 14 included weeks. Official W/L/T is imported explicitly, with optional sanitized sheet/cell provenance. Source reconciliation is tracked independently of import completeness. All-play numerical ties include 0–0; official 0–0 remains a double loss. Luck is official wins minus expected wins. `?season=2019` links directly to a season scope. Tables support sorting, the manager directory and player list support search, and ⌘/Ctrl+K opens archive search. The average filter excludes only missed submissions; it never changes official totals. Mobile navigation, keyboard dialogs, a skip link, reduced-motion handling, and exact values in tables complement the desktop dashboard.
 
@@ -86,3 +87,11 @@ The implementation review and remaining data/deployment prerequisites are record
 The sanitized package handoff is preserved in [IMPORT_NOTES.md](IMPORT_NOTES.md). Original workbooks were used only for private verification; source-cell aliases are documented in the import report.
 
 For repeatable selection imports, use `python3 scripts/import-dna.py /path/to/sanitized-dna.zip` with the package outside the checkout, then run data validation and all checks. The importer refuses to replace unrelated existing lineup work. Its selection contract and formulas are in [docs/DATA.md](docs/DATA.md); the supplied handoff is [docs/DNA_PACKAGE_README.md](docs/DNA_PACKAGE_README.md).
+
+## Weekly analysis
+
+Rivalry Center consolidates manager comparisons; `/compare` redirects there and preserves query filters. Weekly Winners supports season and manager filters, sortable leaderboards and every weekly winner. A shared top score awards each leader one full weekly victory; shared victories have zero winning margin and list the other leaders. Otherwise runner-up includes every manager tied at the next score. Victory rate is victories divided by complete weeks participated, including missed submissions. Records respect filters, retain all tied holders and reset consecutive streaks each season or missing week.
+
+Weekly Recap accepts `?season=2025&week=15`, with Previous/Next Week navigation within the season, a week selector, and an interactive standings chart with manager focus and the selected week marked. All seasons defaults to the earliest verified season. Invalid week values fall back to the first complete week. Standings use cumulative official wins, then points, with shared ranks for exact ties. Opening week has no previous rank or movement. Headlines and all eight awards are deterministic; tied recipients share honors. Climber/fall awards require an actual positive/negative movement. Margin awards require a positive official winning margin, so 0–0 double losses never qualify. Matchup tags use disclosed thresholds: close ≤5 points, blowout ≥50 points, unfortunate loss = a top-four weekly score in an official loss. Exact weekly scores, outcomes and standings accompany the interactive chart. Only complete, reconciled regular seasons feed weekly awards and victories; lineups are not required.
+
+`lib/weekly.ts` contains pure weekly analytics; `components/weekly.tsx` provides both weekly views. Synthetic unit regressions and production browser tests cover ties, zero losses, ranking, filtering, navigation and receipt links.

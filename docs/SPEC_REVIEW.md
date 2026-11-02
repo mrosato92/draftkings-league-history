@@ -16,7 +16,9 @@ These conventions are documented in `docs/DATA.md` and the in-app Methodology di
 ## Missing capabilities added
 
 - `/leaderboards`: qualified official wins, win percentage, total points, scoring average, all-play percentage, and expected wins; minimum observations are visible and adjustable. Rates default to 14 observations, totals to one. Unknown all-play values stay unknown.
-- `/compare`: side-by-side manager totals and rates, global season scope, zero-week scoring-average control, games, and included scoring denominators. It shares the existing Rivalry Center implementation and keeps head-to-head receipts.
+- `/rivalries`: consolidated side-by-side manager totals and rates, global season scope, zero-week scoring-average control, games, included scoring denominators, and head-to-head receipts. `/compare` redirects here preserving query filters.
+- `/weekly-winners`: shared weekly victories, rates with participation denominators, yearly breakdowns, every winner, records and recap links.
+- `/weekly-recap`: season/week navigation, deterministic headlines and shared awards, cumulative official standings movement/chart, scoring ranks and all matchup receipts.
 - Manager profiles: observed NFL player selections and their imported-lineup denominator/coverage, with score-only weeks retained.
 - Luck Lab: manager-season rows for comparing fortunate and unfortunate seasons; opponent scoring strength uses the same eligible weeks as expected/actual wins.
 - Season archives: source-reconciled season summaries; unverified season stories remain empty.

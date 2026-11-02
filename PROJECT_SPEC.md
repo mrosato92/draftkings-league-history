@@ -1,12 +1,15 @@
 # DraftKings League History — Project Specification
 
 ## Mission
+
 Build a polished, desktop-first, publicly accessible historical analytics site for a 16-team head-to-head DraftKings NFL Classic league. Coverage: **2019–2025 (seven seasons)**. The site is a permanent archive, updated **once per year** after the completed season. Prioritize rigorous statistics, drill-downs, and entertaining, snarky but evidence-based commentary.
 
 ## Sources and authority
+
 Original yearly workbooks are the source of truth and may be provided separately; **do not assume they are in this repository**. Official Schedule/Results sheets govern matchup outcomes and scores; standings sheets are used for reconciliation. Individual `Week X` sheets provide DraftKings lineups and player-level data. Some manually submitted lineups have official scores but no selection details. Preserve source workbook, sheet, and cell provenance when feasible. Never invent results, player picks, or missing details. Historical figures mentioned in conversations are provisional until independently checked against source files.
 
 ## League rules
+
 - Use **DraftKings username** as the stable unique manager ID. Usernames have never changed. Membership varies across seasons; there are 16 teams per season and 26 unique usernames are verified in the imported 2019–2025 results (see `docs/HISTORY_IMPORT_REPORT.md`).
 - **Regular season only.** Exclude playoff brackets, playoff results, championships, and championship awards until verified playoff data is supplied.
 - Season lengths vary: 14 weeks in 2019–2020, 15 weeks in 2021–2025 (verified against the supplied source workbooks).
@@ -18,6 +21,7 @@ Original yearly workbooks are the source of truth and may be provided separately
 - Include zero-score weeks by default in official records, all-play and expected wins. Offer an include/exclude-zero filter for applicable scoring averages and performance views; clearly label denominators and methodology.
 
 ## Statistical definitions
+
 - All-play: compare each manager's official weekly score to every other participating manager that same week; wins/losses across the 15 other managers. Score ties should be tracked separately or assigned 0.5 each in expected-win fractions; document the convention.
 - Expected wins per week: (all-play wins + 0.5 × all-play ties) / (number of other active managers). Career expected wins sum weekly expected wins.
 - Luck differential: official wins minus expected wins. Distinguish descriptive schedule luck from causality.
@@ -26,27 +30,33 @@ Original yearly workbooks are the source of truth and may be provided separately
 - Distinguish regular-season career totals, per-season results, weekly records, and player-selection analytics. Player-pick statistics must display observed lineup coverage.
 
 ## Desired site
+
 1. **League HQ:** overview, record highlights, leaders, historical timeline.
 2. **Manager profiles:** 26 historical usernames, career and season records, weekly scores, streaks, charts, observed player selections.
 3. **Leaderboards:** wins, win percentage, points, scoring rates, all-play, expected wins, filters and qualifying thresholds.
 4. **Record Book:** high/low scores, highest losing score, lowest winning score, blowouts, close finishes, streaks, unusual feats, source-linked receipts.
-5. **Rivalry Center:** choose two usernames, head-to-head results, matchup chronology, statistical comparison, evidence-based snark.
+5. **Rivalry Center:** choose two usernames, head-to-head results, matchup chronology, career/season totals and rates, zero-week average controls and denominators, evidence-based snark. `/compare` redirects here preserving query filters; no separate Comparison Lab navigation.
 6. **Luck Lab:** expected versus actual wins, all-play, schedule strength, fortunate/unfortunate seasons.
 7. **Season Archives:** each season's standings, weekly results, scoring charts and season-level stories.
 8. **DraftKings DNA:** most-picked NFL players, lineup tendencies, salary and ownership where available; show sample sizes and missing-data caveats.
 9. **Hall of Fame / Hall of Shame:** regular-season accomplishments and disasters only; no championship claims without playoff data.
-10. **Comparison Lab:** side-by-side manager metrics, filters by season and inclusion of zero weeks.
+10. **Weekly Winners:** `/weekly-winners`, all-time and season victories, participation-based rates, year-by-year totals, every winner and runner-up, score/margin records, season-reset consecutive streaks, and profile/recap links. Season and manager filters; every tied weekly leader receives a full shared victory with zero margin.
+11. **Weekly Recap:** `/weekly-recap?season=2025&week=15`, season/week selection, previous/next navigation, deterministic headlines, official standings progression and movement chart, all 16 scoring ranks relative to average, eight matchup receipts, and eight deterministic awards. Preserve tied recipients. Opening week has no previous standings or movement awards. Zero scores remain official losses, including 0–0. Margin awards require positive official winning margins. Close games ≤5 points, blowouts ≥50 points, unfortunate losses are top-four weekly scores. Only complete, reconciled regular seasons qualify.
 
 ## Design
+
 Premium modern sports analytics aesthetic, desktop-first; combine ESPN visual energy, Pro Football Reference information density, and polished interactive charts. Dark theme, excellent typography, sortable tables, clickable record receipts, season/manager filters. Humor may be sarcastic, snarky and passive-aggressive, but **never invent incidents or unsupported narratives**. No manager photos or real-name displays. No official league name established; use a neutral working title.
 
 ## Architecture and publishing
+
 GitHub repository: `mrosato92/draftkings-league-history` (public). Vercel hosting; annual manual data refresh, not a live DraftKings integration. Prefer a maintainable static-first Next.js + TypeScript application, with structured JSON datasets and no database unless justified. Optimize for desktop; mobile is not a priority. No authentication needed for the public site.
 
 ## Privacy and provenance
+
 Never commit original workbooks containing phone numbers/emails, private participant contact data, credentials, or secrets to the public repository. Publish only sanitized usernames and league-relevant derived data. Validate each output against original records; record coverage and anomalies. Separate verified facts from hypotheses.
 
 ## Delivery milestones
+
 1. Inventory source files and verify schema/identity mapping.
 2. Extract and reconcile official weekly matchup data and standings.
 3. Extract Week X player selections; reconcile official versus exported scores, quantify missingness.
@@ -56,4 +66,5 @@ Never commit original workbooks containing phone numbers/emails, private partici
 7. Document annual import and release procedure.
 
 ## Status
+
 The website implementation and sanitized 2019–2025 results are present: 824 matchups, 1,648 manager-week scores, 26 public usernames, and 12 missed submissions across 103 regular-season weeks. Every manager-week source row and all seven final regular-season standings have been reconciled against the user-supplied private workbooks; see `docs/HISTORY_IMPORT_REPORT.md`. Original workbooks and contact rosters remain outside the public repository. There are now 1,574 reconciled nine-selection lineups covering 95.51% of official manager-weeks; 74 lineups remain unavailable and 44 FLEX positions remain unknown. No stable player IDs, salaries, NFL teams, or per-player scores have been inferred. DNA analytics use exact source-name labels with explicit identity and coverage caveats; salary utilization and QB stacking remain unavailable. See `docs/DNA_IMPORT_REPORT.md`. GitHub delivery supports the configured Vercel automatic deployment; live deployment success must be verified separately.

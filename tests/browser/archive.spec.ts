@@ -3,7 +3,9 @@ const pages = [
   ["/", "League HQ"],
   ["/managers", "Manager Profiles"],
   ["/leaderboards", "Leaderboards"],
-  ["/compare", "Comparison Lab"],
+  ["/compare", "Rivalry Center"],
+  ["/weekly-winners", "Weekly Winners"],
+  ["/weekly-recap", "Weekly Recap"],
   ["/records", "Record Book"],
   ["/rivalries", "Rivalry Center"],
   ["/luck", "Luck Lab"],
@@ -12,7 +14,7 @@ const pages = [
   ["/hall-of-fame", "Fame & Shame"],
 ];
 for (const [route, heading] of pages)
-  test(`desktop: ${heading}`, async ({ page }) => {
+  test(`desktop: ${heading} (${route})`, async ({ page }) => {
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
     await page.setViewportSize({ width: 1440, height: 1000 });

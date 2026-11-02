@@ -1,4 +1,5 @@
 "use client";
+import { WeeklyWinners, WeeklyRecap } from "./weekly";
 import Link from "next/link";
 import {
   useEffect,
@@ -439,7 +440,8 @@ export default function Dashboard({
               setExcludeZeros={setExcludeZeros}
             />
           )}
-          {section === "compare" && (
+          {section === "records" && <RecordBook seasons={selected} />}
+          {section === "rivalries" && (
             <Rivalries
               seasons={selected}
               comparison
@@ -447,8 +449,8 @@ export default function Dashboard({
               setExcludeZeros={setExcludeZeros}
             />
           )}
-          {section === "records" && <RecordBook seasons={selected} />}
-          {section === "rivalries" && <Rivalries seasons={selected} />}
+          {section === "weekly-winners" && <WeeklyWinners seasons={selected} />}
+          {section === "weekly-recap" && <WeeklyRecap seasons={selected} />}
           {section === "luck" && <Luck seasons={selected} />}
           {section === "seasons" && (
             <SeasonArchive
@@ -1366,7 +1368,7 @@ function Rivalries({
         />
       </div>
       <Panel
-        title={comparison ? "The Comparison Lab" : "Side-by-side résumé"}
+        title="Side-by-side résumé"
         eyebrow="ALL OPPONENTS / SELECTED SEASONS"
         aside={
           comparison && setExcludeZeros ? (

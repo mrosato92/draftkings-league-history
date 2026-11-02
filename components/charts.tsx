@@ -1,5 +1,8 @@
 "use client";
+import { useState } from "react";
 import {
+  Line,
+  LineChart,
   Area,
   AreaChart,
   Bar,
@@ -203,5 +206,75 @@ export function DnaFlexChart({
         </BarChart>
       </ResponsiveContainer>
     </div>
+  );
+}
+
+export function StandingsChart({
+  data,
+  managers,
+  selectedWeek,
+}: {
+  data: { week: number; [key: string]: number }[];
+  managers: string[];
+  selectedWeek: number;
+}) {
+  const [focus, setFocus] = useState("");
+  return (
+    <>
+      <label className="select-wrap">
+        Chart focus{" "}
+        <select
+          aria-label="Standings chart manager"
+          value={focus}
+          onChange={(e) => setFocus(e.target.value)}
+        >
+          <option value="">All managers</option>
+          {managers.map((m) => (
+            <option key={m}>{m}</option>
+          ))}
+        </select>
+      </label>
+      <div
+        className="chart-wrap"
+        role="img"
+        aria-label={`Season standings progression, selected week ${selectedWeek}. Exact selected-week standings in the table below.`}
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={data}
+            margin={{ top: 15, right: 20, bottom: 10, left: -10 }}
+          >
+            <CartesianGrid stroke="#2a2f2a" />
+            <XAxis dataKey="week" tick={{ fill: "#8e998f", fontSize: 11 }} />
+            <YAxis
+              reversed
+              domain={[1, 16]}
+              ticks={[1, 4, 8, 12, 16]}
+              tick={{ fill: "#8e998f", fontSize: 11 }}
+            />
+            <Tooltip contentStyle={tooltip} />
+            <ReferenceLine
+              x={selectedWeek}
+              stroke="#ed8553"
+              strokeWidth={2}
+              label={{ value: `Week ${selectedWeek}`, fill: "#ed8553" }}
+            />
+            {managers
+              .filter((m) => !focus || m === focus)
+              .map((m) => (
+                <Line
+                  key={m}
+                  dataKey={m}
+                  type="linear"
+                  stroke={`hsl(${(managers.indexOf(m) * 137.5) % 360}, 55%, 65%)`}
+                  strokeWidth={focus ? 3 : 1.5}
+                  dot={false}
+                  isAnimationActive={false}
+                />
+              ))}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </>
   );
 }

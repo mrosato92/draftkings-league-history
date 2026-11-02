@@ -3247,3 +3247,74 @@ tbody tr:hover {
 .dna-content:disabled .select-wrap {
   opacity: 0.65;
 }
+
+.weekly-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+.weekly-records,
+.weekly-headlines,
+.weekly-matchups,
+.weekly-awards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.weekly-headlines,
+.weekly-matchups,
+.weekly-awards {
+  padding: 20px;
+}
+.weekly-headlines article,
+.weekly-matchups article,
+.weekly-awards article {
+  padding: 18px;
+  border: 1px solid #343a33;
+  border-radius: 10px;
+  background: #1c211c;
+  min-width: 0;
+}
+.weekly-headlines h3,
+.weekly-awards h3 {
+  color: #ed8553;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+.weekly-headlines p,
+.weekly-awards p {
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+.weekly-record {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid #343a33;
+}
+.weekly-score {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.weekly-matchups .micro-tag {
+  display: inline-block;
+  margin: 8px;
+}
+.weekly-awards .manager-name {
+  margin: 6px 0;
+}
+@media (max-width: 800px) {
+  .weekly-records,
+  .weekly-headlines,
+  .weekly-matchups,
+  .weekly-awards {
+    grid-template-columns: 1fr;
+  }
+}

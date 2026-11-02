@@ -21,13 +21,6 @@ export const sections = [
     icon: "trophy",
   },
   {
-    id: "compare",
-    label: "Comparison Lab",
-    short: "Compare",
-    description: "Two managers. One consistent measuring stick.",
-    icon: "flask",
-  },
-  {
     id: "records",
     label: "Record Book",
     short: "Records",
@@ -40,6 +33,20 @@ export const sections = [
     short: "Rivalries",
     description: "Settle it with numbers. Then argue anyway.",
     icon: "swords",
+  },
+  {
+    id: "weekly-winners",
+    label: "Weekly Winners",
+    short: "Weekly Winners",
+    description: "Beat all sixteen. Keep the receipt.",
+    icon: "trophy",
+  },
+  {
+    id: "weekly-recap",
+    label: "Weekly Recap",
+    short: "Weekly Recap",
+    description: "One week. Eight matchups. Plenty to discuss.",
+    icon: "archive",
   },
   {
     id: "luck",
